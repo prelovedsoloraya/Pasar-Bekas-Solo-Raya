@@ -487,12 +487,35 @@
     }
     .setup-banner ol { margin: 8px 0 0 16px; line-height: 1.8; }
 
+    /* ── Floating Jual button (mobile only) ──────────────────── */
+    .btn-jual-float {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      z-index: 50;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px 22px;
+      border-radius: 999px;
+      background: var(--purple);
+      color: var(--purple-pale);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(83,74,183,0.35);
+      transition: background 0.15s, transform 0.15s;
+    }
+    .btn-jual-float:active { transform: scale(0.96); }
+
     /* ── Responsive ───────────────────────────────────────────── */
     @media (max-width: 600px) {
       .topbar { padding-top: 1.25rem; }
       .topbar-right { gap: 6px; }
       .btn-jual { display: none; }
+      .btn-jual-float { display: block; }
       .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .page { padding-bottom: 6rem; }
     }
     @media (max-width: 380px) {
       .grid { grid-template-columns: 1fr; }
@@ -555,10 +578,13 @@
   </div>
 
   <footer class="footer">
-    <span>🏮 Pasar Bekas Solo — <a href="https://github.com" target="_blank">GitHub Pages</a></span>
-    <span>Data dari <a href="https://sheets.google.com" target="_blank">Google Sheets</a> · Foto di <a href="https://imgbb.com" target="_blank">ImgBB</a></span>
+    <span>🏮 Pasar Bekas Solo</span>
+    <span>Solo &amp; sekitar · Harga jujur sejak hari ini</span>
   </footer>
 </div>
+
+<!-- Floating "+ Jual Barang" button — mobile only -->
+<button class="btn-jual-float" id="btn-jual-float">+ Jual Barang</button>
 
 <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
   <div class="modal" id="modal">
@@ -798,23 +824,48 @@ async function loadData() {
     return;
   }
 
-  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+  // Beberapa proxy dicoba satu per satu — kalau satu mati, lanjut ke berikutnya
+  const PROXIES = [
+    async (u) => {
+      const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(u)}`);
+      if (!r.ok) throw new Error('corsproxy failed');
+      return r.text();
+    },
+    async (u) => {
+      const r = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`);
+      if (!r.ok) throw new Error('codetabs failed');
+      return r.text();
+    },
+    async (u) => {
+      const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(u)}`);
+      if (!r.ok) throw new Error('allorigins failed');
+      const j = await r.json();
+      return j.contents || '';
+    },
+  ];
 
-  try {
-    const res  = await fetch(proxyUrl);
-    const json = await res.json();
-    allItems   = parseCSV(json.contents || '');
+  let csv = null;
+  for (const proxy of PROXIES) {
+    try {
+      csv = await proxy(url);
+      if (csv && csv.trim().length > 10) break;
+    } catch (e) {
+      console.warn('Proxy gagal, coba berikutnya…', e.message);
+    }
+  }
+
+  if (csv) {
+    allItems = parseCSV(csv);
     document.getElementById('loading-state')?.remove();
     renderGrid();
-  } catch (err) {
-    console.error('Gagal memuat data:', err);
+  } else {
     const grid = document.getElementById('grid');
     grid.innerHTML = `<div class="state-msg">
-      <span class="icon">⚠️</span>
-      Gagal memuat data dari Google Sheets.
-      <div class="hint">Pastikan sheet sudah dipublikasikan dan URL di CONFIG benar.</div>
+      <span class="icon">😮‍💨</span>
+      Aduh, barangnya kabur semua.
+      <div class="hint">Coba muat ulang halaman, atau cek koneksi kamu.</div>
     </div>`;
-    document.getElementById('stats-text').textContent = 'Gagal memuat';
+    document.getElementById('stats-text').textContent = '';
   }
 }
 
@@ -832,6 +883,11 @@ const SAMPLE_DATA = [
 
 /* ── Init ─────────────────────────────────────────────────────── */
 loadData();
+
+/* ── Floating button (mobile) ─────────────────────────────────── */
+document.getElementById('btn-jual-float')?.addEventListener('click', () => {
+  window.location.href = 'jual.html';
+});
 </script>
 </body>
 </html>
