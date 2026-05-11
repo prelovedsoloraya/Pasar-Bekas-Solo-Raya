@@ -520,6 +520,142 @@
     @media (max-width: 380px) {
       .grid { grid-template-columns: 1fr; }
     }
+
+    /* ── Modal image carousel ─────────────────────────────────── */
+    .modal-img-carousel {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      background: var(--bg2);
+      overflow: hidden;
+    }
+    .carousel-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.3s ease;
+    }
+    .carousel-slide {
+      flex: 0 0 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      user-select: none;
+    }
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.4);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: background 0.15s;
+    }
+    .carousel-btn:hover { background: rgba(0,0,0,0.65); }
+    .carousel-btn.prev { left: 8px; }
+    .carousel-btn.next { right: 8px; }
+    .carousel-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      z-index: 2;
+    }
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .carousel-dot.active {
+      background: #fff;
+      transform: scale(1.3);
+    }
+
+    /* ── Terjual overlay ──────────────────────────────────────── */
+    .card.sold {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .card.sold .card-img::after {
+      content: 'TERJUAL';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card.sold .card-img { position: relative; }
+
+    /* ── Load more button ─────────────────────────────────────── */
+    .load-more-wrap {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      padding: 1rem 0 0.5rem;
+    }
+    .btn-load-more {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 28px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border2);
+      background: #fff;
+      color: var(--text1);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-load-more:hover {
+      background: var(--purple-pale);
+      border-color: var(--purple-mid);
+      color: var(--purple-dark);
+    }
+
+    /* ── Terjual toggle in stats bar ──────────────────────────── */
+    .toggle-terjual {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text2);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .toggle-terjual.active {
+      background: var(--gray-bg);
+      border-color: var(--border2);
+      color: var(--text1);
+    }
   </style>
 </head>
 
@@ -566,7 +702,7 @@
 
   <div class="stats-bar">
     <span id="stats-text">Memuat data…</span>
-    <span id="sort-label" style="color:var(--text3);font-size:12px"></span>
+    <button class="toggle-terjual" id="toggle-terjual">Tampilkan terjual</button>
   </div>
 
   <div class="grid" id="grid">
@@ -654,16 +790,21 @@ function parseCSV(text) {
 }
 
 /* ── State ────────────────────────────────────────────────────── */
-let allItems     = [];
-let activeFilter = 'semua';
-let searchQuery  = '';
-let selectedItem = null;
+let allItems      = [];
+let activeFilter  = 'semua';
+let searchQuery   = '';
+let selectedItem  = null;
+let showTerjual   = false;   // tampilkan barang terjual?
+let currentPage   = 1;
+const PAGE_SIZE   = 20;
 
 /* ── Render card ──────────────────────────────────────────────── */
 function renderCard(item) {
   const card = document.createElement('div');
-  card.className = 'card';
+  const sold = isTerjual(item);
+  card.className = 'card' + (sold ? ' sold' : '');
   card.dataset.cat = (item.kategori || '').toLowerCase();
+  if (sold) card.style.pointerEvents = 'none';
 
   const imgWrap = document.createElement('div');
   imgWrap.className = 'card-img';
@@ -672,6 +813,10 @@ function renderCard(item) {
     img.src = item.foto;
     img.alt = item.nama;
     img.loading = 'lazy';
+    img.referrerPolicy = 'no-referrer';
+    img.crossOrigin = 'anonymous';
+    img.referrerPolicy = 'no-referrer';
+    img.crossOrigin = 'anonymous';
     img.onerror = () => { imgWrap.innerHTML = item.emoji || '📦'; };
     imgWrap.appendChild(img);
   } else {
@@ -703,6 +848,10 @@ function renderCard(item) {
 }
 
 /* ── Filter + Search ──────────────────────────────────────────── */
+function isTerjual(item) {
+  return (item.status || item.terjual || '').toLowerCase().trim() === 'terjual';
+}
+
 function getFiltered() {
   return allItems.filter(item => {
     const catOk    = activeFilter === 'semua' || (item.kategori || '').toLowerCase() === activeFilter;
@@ -711,17 +860,23 @@ function getFiltered() {
       (item.nama     || '').toLowerCase().includes(q) ||
       (item.lokasi   || '').toLowerCase().includes(q) ||
       (item.kategori || '').toLowerCase().includes(q);
-    return catOk && searchOk;
+    const soldOk   = showTerjual ? true : !isTerjual(item);
+    return catOk && searchOk && soldOk;
   });
 }
 
-function renderGrid() {
+function renderGrid(resetPage = true) {
+  if (resetPage) currentPage = 1;
   const grid     = document.getElementById('grid');
   const filtered = getFiltered();
   grid.innerHTML  = '';
 
-  document.getElementById('stats-text').textContent =
-    filtered.length ? `${filtered.length} barang ditemukan` : '';
+  const totalAvail = allItems.filter(i => !isTerjual(i)).length;
+  const terjualCount = allItems.length - totalAvail;
+  let statsText = filtered.length ? `${filtered.length} barang ditemukan` : '';
+  if (terjualCount > 0 && !showTerjual)
+    statsText += ` · <span style="color:var(--text3)">${terjualCount} terjual disembunyikan</span>`;
+  document.getElementById('stats-text').innerHTML = statsText;
 
   if (!filtered.length) {
     const msg = document.createElement('div');
@@ -731,7 +886,26 @@ function renderGrid() {
     return;
   }
 
-  filtered.forEach(item => grid.appendChild(renderCard(item)));
+  const pageItems = filtered.slice(0, currentPage * PAGE_SIZE);
+  pageItems.forEach(item => grid.appendChild(renderCard(item)));
+
+  // Load more button
+  if (pageItems.length < filtered.length) {
+    const wrap = document.createElement('div');
+    wrap.className = 'load-more-wrap';
+    const btn = document.createElement('button');
+    btn.className = 'btn-load-more';
+    const remaining = filtered.length - pageItems.length;
+    btn.textContent = `Muat ${Math.min(remaining, PAGE_SIZE)} barang lagi`;
+    btn.addEventListener('click', () => {
+      currentPage++;
+      renderGrid(false);
+      // Scroll sedikit ke bawah supaya terasa ada konten baru
+      btn.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    });
+    wrap.appendChild(btn);
+    grid.appendChild(wrap);
+  }
 }
 
 /* ── Modal ────────────────────────────────────────────────────── */
@@ -741,15 +915,87 @@ function openModal(item) {
 
   const imgWrap = document.getElementById('modal-img-wrap');
   imgWrap.innerHTML = '';
-  imgWrap.className = 'modal-img';
-  if (item.foto) {
+
+  // Support multiple photos separated by "|"
+  const photos = (item.foto || '').split('|').map(s => s.trim()).filter(Boolean);
+
+  if (photos.length === 0) {
+    // No photo — emoji fallback
+    imgWrap.className = 'modal-img';
+    imgWrap.textContent = item.emoji || '📦';
+  } else if (photos.length === 1) {
+    // Single photo — plain img
+    imgWrap.className = 'modal-img';
     const img = document.createElement('img');
-    img.src = item.foto;
+    img.src = photos[0];
     img.alt = item.nama;
-    img.onerror = () => { imgWrap.innerHTML = item.emoji || '📦'; };
+    img.referrerPolicy = 'no-referrer';
+    img.crossOrigin = 'anonymous';
+    img.onerror = () => { imgWrap.className = 'modal-img'; imgWrap.innerHTML = item.emoji || '📦'; };
     imgWrap.appendChild(img);
   } else {
-    imgWrap.textContent = item.emoji || '📦';
+    // Multiple photos — carousel
+    imgWrap.className = 'modal-img-carousel';
+    let current = 0;
+
+    const track = document.createElement('div');
+    track.className = 'carousel-track';
+
+    photos.forEach((src, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = item.nama + ' foto ' + (i + 1);
+      img.referrerPolicy = 'no-referrer';
+      img.crossOrigin = 'anonymous';
+      img.loading = i === 0 ? 'eager' : 'lazy';
+      img.onerror = () => { slide.innerHTML = item.emoji || '📦'; };
+      slide.appendChild(img);
+      track.appendChild(slide);
+    });
+
+    const btnPrev = document.createElement('button');
+    btnPrev.className = 'carousel-btn prev';
+    btnPrev.innerHTML = '‹';
+    btnPrev.setAttribute('aria-label', 'Foto sebelumnya');
+
+    const btnNext = document.createElement('button');
+    btnNext.className = 'carousel-btn next';
+    btnNext.innerHTML = '›';
+    btnNext.setAttribute('aria-label', 'Foto berikutnya');
+
+    const dotsWrap = document.createElement('div');
+    dotsWrap.className = 'carousel-dots';
+    const dots = photos.map((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(d);
+      return d;
+    });
+
+    function goTo(idx) {
+      current = (idx + photos.length) % photos.length;
+      track.style.transform = `translateX(-${current * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    btnPrev.addEventListener('click', (e) => { e.stopPropagation(); goTo(current - 1); });
+    btnNext.addEventListener('click', (e) => { e.stopPropagation(); goTo(current + 1); });
+
+    // Swipe support
+    let touchStartX = 0;
+    imgWrap.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    imgWrap.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) goTo(dx < 0 ? current + 1 : current - 1);
+    });
+
+    imgWrap.appendChild(track);
+    imgWrap.appendChild(btnPrev);
+    imgWrap.appendChild(btnNext);
+    imgWrap.appendChild(dotsWrap);
   }
 
   document.getElementById('modal-cat').textContent   = item.kategori || 'Lainnya';
@@ -784,10 +1030,23 @@ document.getElementById('modal-wa').addEventListener('click', () => {
   const text = encodeURIComponent(
     `Halo, saya tertarik dengan *${selectedItem.nama}* seharga ${formatRupiah(selectedItem.harga || 0)} yang ada di Pasar Bekas Solo. Apakah masih tersedia?`
   );
-  window.open(`https://wa.me/?text=${text}`, '_blank');
+  // Ambil nomor WA penjual dari kolom "wa" di sheet (format: 08xx atau 628xx)
+  const raw = (selectedItem.wa || selectedItem.hp || selectedItem.telepon || '').replace(/\D/g, '');
+  const nomor = raw.startsWith('0') ? '62' + raw.slice(1) : raw;
+  const waUrl = nomor
+    ? `https://wa.me/${nomor}?text=${text}`
+    : `https://wa.me/?text=${text}`;
+  window.open(waUrl, '_blank');
 });
 
 /* ── Filters UI ───────────────────────────────────────────────── */
+document.getElementById('toggle-terjual').addEventListener('click', function() {
+  showTerjual = !showTerjual;
+  this.textContent = showTerjual ? 'Sembunyikan terjual' : 'Tampilkan terjual';
+  this.classList.toggle('active', showTerjual);
+  renderGrid();
+});
+
 document.getElementById('filters').addEventListener('click', e => {
   if (!e.target.matches('.filter-btn')) return;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
