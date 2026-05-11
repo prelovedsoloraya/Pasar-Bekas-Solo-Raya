@@ -11,25 +11,7 @@
   =============================================================== -->
   <script>
     const CONFIG = {
-      /**
-       * 1. Buka Google Sheets kamu
-       * 2. File → Share → Publish to web → pilih sheet, format CSV → Publish
-       * 3. Salin URL-nya dan tempel di sini
-       *
-       * Kolom yang dibutuhkan di sheet (baris pertama = header):
-       *   nama | kategori | harga | kondisi | lokasi | foto | emoji
-       *
-       * - foto   : URL gambar dari ImgBB (bisa kosong, pakai emoji sebagai fallback)
-       * - emoji  : satu emoji untuk fallback jika foto kosong
-       * - kondisi: Bagus / Lumayan / Bekas
-       * - kategori: elektronik / perabot / fashion / hobi / otomotif / lainnya
-       */
       SHEET_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTa44CngjNq1XaYp9bhTfUfq-Ntgcs7WI82pT67qxTJqb5gcRbSPMbO41LGt29qoc8amyYX6Yu5Qq8/pub?gid=0&single=true&output=csv",
-
-      /**
-       * Jumlah kartu per halaman carousel (di layar lebar)
-       * Default: 3
-       */
       CARDS_PER_PAGE: 3,
     };
   </script>
@@ -40,7 +22,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <style>
-    /* ── Reset & Base ─────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -60,6 +41,10 @@
 
       --green-bg:    #EAF3DE;
       --green-fg:    #3B6D11;
+      --teal-bg:     #D5F5EC;   /* fix 3 — Like New */
+      --teal-fg:     #0D6651;
+      --sky-bg:      #DBEEFF;   /* fix 3 — Bekas Mulus */
+      --sky-fg:      #1450A0;
       --amber-bg:    #FAEEDA;
       --amber-fg:    #854F0B;
       --gray-bg:     #F1EFE8;
@@ -68,9 +53,6 @@
       --radius-sm:   8px;
       --radius-md:   12px;
       --radius-lg:   16px;
-
-      --card-w:      220px;
-      --card-img-h:  155px;
     }
 
     html { scroll-behavior: smooth; }
@@ -84,7 +66,6 @@
 
     a { color: inherit; text-decoration: none; }
 
-    /* ── Layout wrapper ───────────────────────────────────────── */
     .page {
       max-width: 960px;
       margin: 0 auto;
@@ -255,7 +236,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* stagger */
     .card:nth-child(1)  { animation-delay: .00s }
     .card:nth-child(2)  { animation-delay: .04s }
     .card:nth-child(3)  { animation-delay: .08s }
@@ -347,9 +327,13 @@
       border-radius: 999px;
       flex-shrink: 0;
     }
-    .cond-bagus   { background: var(--green-bg); color: var(--green-fg); }
-    .cond-lumayan { background: var(--amber-bg); color: var(--amber-fg); }
-    .cond-bekas   { background: var(--gray-bg);  color: var(--gray-fg);  }
+
+    /* ── fix 3: kondisi badge — lengkap ──────────────────────── */
+    .cond-like-new   { background: var(--teal-bg);  color: var(--teal-fg);  }
+    .cond-bagus      { background: var(--green-bg); color: var(--green-fg); }
+    .cond-bekas-mulus{ background: var(--sky-bg);   color: var(--sky-fg);   }
+    .cond-lumayan    { background: var(--amber-bg); color: var(--amber-fg); }
+    .cond-bekas      { background: var(--gray-bg);  color: var(--gray-fg);  }
 
     /* ── States ───────────────────────────────────────────────── */
     .state-msg {
@@ -407,12 +391,9 @@
       justify-content: center;
       font-size: 72px;
     }
-    .modal-img img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
+    .modal-img img { width: 100%; height: 100%; object-fit: cover; }
 
     .modal-body { padding: 20px 22px 22px; }
-
     .modal-cat {
       font-size: 11px;
       font-weight: 600;
@@ -421,14 +402,12 @@
       color: var(--text3);
       margin-bottom: 6px;
     }
-
     .modal-name {
       font-family: 'Playfair Display', serif;
       font-size: 20px;
       font-weight: 700;
       line-height: 1.2;
     }
-
     .modal-price {
       font-family: 'Playfair Display', serif;
       font-size: 26px;
@@ -436,7 +415,6 @@
       color: var(--purple);
       margin: 10px 0;
     }
-
     .modal-meta {
       display: flex;
       gap: 10px;
@@ -453,11 +431,7 @@
       padding: 4px 10px;
       border-radius: 999px;
     }
-
-    .modal-actions {
-      display: flex;
-      gap: 8px;
-    }
+    .modal-actions { display: flex; gap: 8px; }
     .modal-btn {
       flex: 1;
       padding: 11px;
@@ -493,7 +467,7 @@
     }
     .footer a { color: var(--purple); }
 
-    /* ── Setup banner (shown when URL is placeholder) ─────────── */
+    /* ── Setup banner ─────────────────────────────────────────── */
     .setup-banner {
       background: linear-gradient(135deg, #fffbeb, #fef3c7);
       border: 1px solid #f59e0b;
@@ -529,7 +503,6 @@
 <body>
 <div class="page">
 
-  <!-- Topbar -->
   <header class="topbar">
     <div class="topbar-left">
       <h1>🏮 Pasar Bekas Solo</h1>
@@ -537,11 +510,11 @@
     </div>
     <div class="topbar-right">
       <span class="badge-lokasi">📍 Solo &amp; sekitar</span>
+      <!-- FIX 1: link ke jual.html, bukan WhatsApp -->
       <button class="btn-jual" id="btn-jual">+ Jual Barang</button>
     </div>
   </header>
 
-  <!-- Setup banner -->
   <div class="setup-banner" id="setup-banner">
     ⚠️ <strong>Perlu dikonfigurasi!</strong> Ganti nilai <code>SHEET_CSV_URL</code> di bagian &lt;script&gt; atas file ini.
     <ol>
@@ -552,14 +525,12 @@
     </ol>
   </div>
 
-  <!-- Search -->
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
     <input class="search-input" id="search" type="search"
            placeholder="Cari barang…" autocomplete="off" />
   </div>
 
-  <!-- Filters -->
   <div class="filters" id="filters">
     <button class="filter-btn active" data-cat="semua">Semua</button>
     <button class="filter-btn" data-cat="elektronik">📱 Elektronik</button>
@@ -570,28 +541,25 @@
     <button class="filter-btn" data-cat="lainnya">📦 Lainnya</button>
   </div>
 
-  <!-- Stats -->
   <div class="stats-bar">
     <span id="stats-text">Memuat data…</span>
     <span id="sort-label" style="color:var(--text3);font-size:12px"></span>
   </div>
 
-  <!-- Grid -->
   <div class="grid" id="grid">
+    <!-- FIX 2: loading text diperbarui -->
     <div class="state-msg" id="loading-state">
       <div class="spinner"></div>
-      <div>Memuat produk dari Google Sheets…</div>
+      <div>Bentar ya, lagi cek gudang sembari makan MBG 🍱</div>
     </div>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     <span>🏮 Pasar Bekas Solo — <a href="https://github.com" target="_blank">GitHub Pages</a></span>
     <span>Data dari <a href="https://sheets.google.com" target="_blank">Google Sheets</a> · Foto di <a href="https://imgbb.com" target="_blank">ImgBB</a></span>
   </footer>
 </div>
 
-<!-- Modal detail produk -->
 <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
   <div class="modal" id="modal">
     <div class="modal-img" id="modal-img-wrap"></div>
@@ -614,9 +582,30 @@ function formatRupiah(n) {
   return 'Rp ' + Number(n).toLocaleString('id-ID');
 }
 
+/*
+ * FIX 3: kondisi badge — support nilai baru
+ *
+ * Nilai yang dikenali (case-insensitive, spasi diabaikan):
+ *   Like New  → teal
+ *   Bagus     → hijau
+ *   Bekas Mulus → biru muda
+ *   Lumayan   → amber
+ *   Bekas     → abu (fallback)
+ *
+ * Cara kerja: normalisasi string → cek substring agar typo minor tetap match.
+ */
 function condClass(k) {
-  const m = { 'bagus': 'cond-bagus', 'lumayan': 'cond-lumayan', 'bekas': 'cond-bekas' };
-  return m[(k || '').toLowerCase()] || 'cond-bekas';
+  const s = (k || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  if (s === 'like new' || s === 'likenew')  return 'cond-like-new';
+  if (s === 'bagus')                         return 'cond-bagus';
+  if (s === 'bekas mulus')                   return 'cond-bekas-mulus';
+  if (s === 'lumayan')                       return 'cond-lumayan';
+  // Fallback: jika ada kata "like" → like-new, "mulus" → bekas-mulus, dll.
+  if (s.includes('like'))                    return 'cond-like-new';
+  if (s.includes('mulus'))                   return 'cond-bekas-mulus';
+  if (s.includes('bagus'))                   return 'cond-bagus';
+  if (s.includes('lumayan'))                 return 'cond-lumayan';
+  return 'cond-bekas'; // default
 }
 
 function parseCSV(text) {
@@ -624,7 +613,6 @@ function parseCSV(text) {
   if (lines.length < 2) return [];
   const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
   return lines.slice(1).map(line => {
-    // Handle quoted commas in CSV
     const cols = [];
     let cur = '', inQ = false;
     for (const ch of line) {
@@ -640,21 +628,19 @@ function parseCSV(text) {
 }
 
 /* ── State ────────────────────────────────────────────────────── */
-let allItems    = [];
+let allItems     = [];
 let activeFilter = 'semua';
 let searchQuery  = '';
 let selectedItem = null;
 
 /* ── Render card ──────────────────────────────────────────────── */
 function renderCard(item) {
-  const card   = document.createElement('div');
+  const card = document.createElement('div');
   card.className = 'card';
   card.dataset.cat = (item.kategori || '').toLowerCase();
 
-  // Image area
   const imgWrap = document.createElement('div');
   imgWrap.className = 'card-img';
-
   if (item.foto) {
     const img = document.createElement('img');
     img.src = item.foto;
@@ -666,8 +652,6 @@ function renderCard(item) {
     imgWrap.textContent = item.emoji || '📦';
   }
 
-  // Kondisi badge
-  const condLower = (item.kondisi || '').toLowerCase();
   const condLabel = item.kondisi || 'Bekas';
   const condCls   = condClass(item.kondisi);
 
@@ -695,25 +679,23 @@ function renderCard(item) {
 /* ── Filter + Search ──────────────────────────────────────────── */
 function getFiltered() {
   return allItems.filter(item => {
-    const catOk   = activeFilter === 'semua' || (item.kategori || '').toLowerCase() === activeFilter;
-    const q       = searchQuery.toLowerCase();
+    const catOk    = activeFilter === 'semua' || (item.kategori || '').toLowerCase() === activeFilter;
+    const q        = searchQuery.toLowerCase();
     const searchOk = !q ||
-      (item.nama    || '').toLowerCase().includes(q) ||
-      (item.lokasi  || '').toLowerCase().includes(q) ||
-      (item.kategori|| '').toLowerCase().includes(q);
+      (item.nama     || '').toLowerCase().includes(q) ||
+      (item.lokasi   || '').toLowerCase().includes(q) ||
+      (item.kategori || '').toLowerCase().includes(q);
     return catOk && searchOk;
   });
 }
 
 function renderGrid() {
-  const grid    = document.getElementById('grid');
+  const grid     = document.getElementById('grid');
   const filtered = getFiltered();
-  grid.innerHTML = '';
+  grid.innerHTML  = '';
 
   document.getElementById('stats-text').textContent =
-    filtered.length
-      ? `${filtered.length} barang ditemukan`
-      : '';
+    filtered.length ? `${filtered.length} barang ditemukan` : '';
 
   if (!filtered.length) {
     const msg = document.createElement('div');
@@ -731,18 +713,16 @@ function openModal(item) {
   selectedItem = item;
   const overlay = document.getElementById('modal-overlay');
 
-  // Image
   const imgWrap = document.getElementById('modal-img-wrap');
   imgWrap.innerHTML = '';
+  imgWrap.className = 'modal-img';
   if (item.foto) {
     const img = document.createElement('img');
     img.src = item.foto;
     img.alt = item.nama;
     img.onerror = () => { imgWrap.innerHTML = item.emoji || '📦'; };
-    imgWrap.className = 'modal-img';
     imgWrap.appendChild(img);
   } else {
-    imgWrap.className = 'modal-img';
     imgWrap.textContent = item.emoji || '📦';
   }
 
@@ -800,20 +780,17 @@ document.getElementById('search').addEventListener('input', e => {
   }, 200);
 });
 
-/* ── "Jual Barang" → WhatsApp form ───────────────────────────── */
+/* ── FIX 1: tombol "Jual Barang" → jual.html ─────────────────── */
 document.getElementById('btn-jual').addEventListener('click', () => {
-  const text = encodeURIComponent('Halo, saya ingin menjual barang di Pasar Bekas Solo. Apa langkah-langkahnya?');
-  window.open(`https://wa.me/?text=${text}`, '_blank');
+  window.location.href = 'jual.html';
 });
 
 /* ── Fetch & parse Google Sheets ─────────────────────────────── */
 async function loadData() {
   const url = CONFIG.SHEET_CSV_URL;
 
-  // Belum dikonfigurasi
   if (!url || url.startsWith('GANTI')) {
     document.getElementById('setup-banner').style.display = 'block';
-    // Tampilkan data contoh supaya tampilan terlihat
     allItems = SAMPLE_DATA;
     document.getElementById('loading-state')?.remove();
     document.getElementById('stats-text').textContent = `${allItems.length} barang (data contoh)`;
@@ -821,8 +798,6 @@ async function loadData() {
     return;
   }
 
-  // Proxy CORS via allorigins (gratis, untuk GitHub Pages)
-  // Jika ingin hosting sendiri, ganti dengan server proxy milik sendiri
   const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
   try {
@@ -843,16 +818,16 @@ async function loadData() {
   }
 }
 
-/* ── Data contoh (dipakai sebelum sheet dikonfigurasi) ───────── */
+/* ── Data contoh ──────────────────────────────────────────────── */
 const SAMPLE_DATA = [
-  { nama:'HP Samsung A53 5G', kategori:'Elektronik', harga:2100000, kondisi:'Bagus',   lokasi:'Laweyan',    foto:'', emoji:'📱' },
-  { nama:'Laptop Lenovo ThinkPad', kategori:'Elektronik', harga:3500000, kondisi:'Lumayan', lokasi:'Banjarsari', foto:'', emoji:'💻' },
-  { nama:'Kursi Jati Antik',  kategori:'Perabot',    harga:850000,  kondisi:'Bekas',   lokasi:'Pasar Klewer',foto:'', emoji:'🪑' },
-  { nama:'Batik Solo Halus',  kategori:'Fashion',    harga:120000,  kondisi:'Bagus',   lokasi:'Pasar Gede', foto:'', emoji:'👗' },
-  { nama:'Gitar Akustik Yamaha',kategori:'Hobi',     harga:450000,  kondisi:'Lumayan', lokasi:'Jebres',     foto:'', emoji:'🎸' },
-  { nama:'Motor Honda Beat 2019',kategori:'Otomotif',harga:9500000, kondisi:'Bagus',   lokasi:'Serengan',   foto:'', emoji:'🏍️' },
-  { nama:'Kamera Canon EOS M50',kategori:'Elektronik',harga:4200000,kondisi:'Bagus',   lokasi:'Gondang',    foto:'', emoji:'📷' },
-  { nama:'Set Meja Makan Kayu',kategori:'Perabot',   harga:1200000, kondisi:'Lumayan', lokasi:'Manahan',    foto:'', emoji:'🪴' },
+  { nama:'HP Samsung A53 5G',      kategori:'Elektronik', harga:2100000, kondisi:'Like New',    lokasi:'Laweyan',     foto:'', emoji:'📱' },
+  { nama:'Laptop Lenovo ThinkPad', kategori:'Elektronik', harga:3500000, kondisi:'Bekas Mulus', lokasi:'Banjarsari',  foto:'', emoji:'💻' },
+  { nama:'Kursi Jati Antik',       kategori:'Perabot',    harga:850000,  kondisi:'Bekas',        lokasi:'Pasar Klewer',foto:'', emoji:'🪑' },
+  { nama:'Batik Solo Halus',       kategori:'Fashion',    harga:120000,  kondisi:'Bagus',        lokasi:'Pasar Gede',  foto:'', emoji:'👗' },
+  { nama:'Gitar Akustik Yamaha',   kategori:'Hobi',       harga:450000,  kondisi:'Lumayan',      lokasi:'Jebres',      foto:'', emoji:'🎸' },
+  { nama:'Motor Honda Beat 2019',  kategori:'Otomotif',   harga:9500000, kondisi:'Bagus',        lokasi:'Serengan',    foto:'', emoji:'🏍️' },
+  { nama:'Kamera Canon EOS M50',   kategori:'Elektronik', harga:4200000, kondisi:'Like New',     lokasi:'Gondang',     foto:'', emoji:'📷' },
+  { nama:'Set Meja Makan Kayu',    kategori:'Perabot',    harga:1200000, kondisi:'Lumayan',      lokasi:'Manahan',     foto:'', emoji:'🪴' },
 ];
 
 /* ── Init ─────────────────────────────────────────────────────── */
