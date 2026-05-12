@@ -337,14 +337,14 @@ function parseCSV(text) {
     const obj = {};
     headers.forEach((h, i) => obj[h] = (cols[i] || '').replace(/^"|"$/g, '').trim());
     return obj;
-  }).filter(r => r.nama);
+  }).filter(r => r.nama && !(r.status || '').toLowerCase().includes('terjual'));
 }
 
 let allItems = [], activeFilter = 'semua', searchQuery = '', selectedItem = null;
 
 function getFotos(item) {
   if (!item.foto) return [];
-  return item.foto.split(',').map(s => s.trim()).filter(Boolean);
+  return item.foto.split(/[|,]/).map(s => s.trim()).filter(Boolean);
 }
 
 
