@@ -428,7 +428,7 @@
     <p class="section-title">Foto Barang</p>
 
     <div class="form-group">
-      <label>Upload foto <span class="hint">(maks 5 foto, jpg/png, maks 5MB per foto)</span></label>
+      <label>Upload foto <span class="hint">(maks 3 foto, jpg/png, maks 5MB per foto)</span></label>
       <div class="foto-grid" id="foto-grid">
         <!-- Slot foto akan dirender oleh JS -->
       </div>
@@ -458,8 +458,9 @@
 
 <script>
 
-  const IMGBB_KEY = "ef178581441891f47abf8c127b4731d4";
-  const MAX_FOTO = 5;
+  const CLOUDINARY_CLOUD = "dis1qi0tz";
+  const CLOUDINARY_PRESET = "pbs_default";
+  const MAX_FOTO = 3;
   let fotoList = [];
   let uploadingCount = 0;
 
@@ -528,14 +529,14 @@
       renderFotoGrid();
 
       const formData = new FormData();
-      formData.append("image", file);
-      formData.append("key", IMGBB_KEY);
+      formData.append("file", file);
+      formData.append("upload_preset", CLOUDINARY_PRESET);
 
       try {
-        const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: formData });
+        const res = await fetch("https://api.cloudinary.com/v1_1/" + CLOUDINARY_CLOUD + "/image/upload", { method: "POST", body: formData });
         const data = await res.json();
-        if (data.success) {
-          fotoList.push(data.data.url);
+        if (data.secure_url) {
+          fotoList.push(data.secure_url);
         } else {
           document.getElementById("upload-status").innerHTML = '<span class="upload-fail">&#x274C; Satu foto gagal diupload</span>';
         }
