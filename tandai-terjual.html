@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tandai Terjual — Pasar Bekas Solo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:      #534AB7;
+      --purple-dark: #3C3489;
+      --purple-pale: #EEEDFE;
+      --purple-mid:  #AFA9EC;
+      --bg:          #FAFAF8;
+      --border:      #E4E2DC;
+      --text1:       #1A1916;
+      --text2:       #5F5E5A;
+      --text3:       #9A9891;
+      --green-bg:    #EAF3DE;
+      --green-fg:    #3B6D11;
+      --red-bg:      #FEEDED;
+      --red-fg:      #B71C1C;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text1);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem 1.75rem;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text3);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--purple); }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: .25rem;
+    }
+    .logo span { font-size: 22px; }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 1.75rem;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .input-wrap {
+      position: relative;
+      margin-bottom: 1.25rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text1);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--purple-mid);
+      box-shadow: 0 0 0 3px rgba(83,74,183,0.1);
+    }
+    input[type="text"]::placeholder {
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: var(--text3);
+      text-transform: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      background: var(--purple);
+      color: var(--purple-pale);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn:hover { background: var(--purple-dark); }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Alert */
+    .alert {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 1rem;
+      display: none;
+    }
+    .alert.error   { background: var(--red-bg);   color: var(--red-fg); }
+    .alert.success { background: var(--green-bg);  color: var(--green-fg); }
+    .alert.show    { display: block; }
+
+    /* Success state */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: .5rem 0;
+    }
+    .success-state .big-icon { font-size: 56px; margin-bottom: .75rem; }
+    .success-state h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      margin-bottom: .5rem;
+    }
+    .success-state p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+    .btn-secondary {
+      display: inline-block;
+      margin-top: 1.25rem;
+      padding: 10px 24px;
+      border-radius: 999px;
+      background: var(--purple-pale);
+      color: var(--purple-dark);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--purple-mid);
+      transition: background .15s;
+    }
+    .btn-secondary:hover { background: #dddcf8; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+
+    .info-box {
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+    .info-box strong { color: var(--text1); }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <a class="back-link" href="/">
+    ← Kembali ke Pasar
+  </a>
+
+  <!-- Form state -->
+  <div id="form-state">
+    <div class="logo"><span>🏮</span> Pasar Bekas Solo</div>
+    <p class="subtitle">Barangmu sudah laku? Tandai di sini supaya listing otomatis hilang dari website.</p>
+
+    <label for="kode-input">Kode rahasia listing</label>
+    <div class="input-wrap">
+      <input type="text" id="kode-input"
+             placeholder="Contoh: PBS-4A7X2"
+             maxlength="10"
+             autocomplete="off"
+             autocorrect="off"
+             spellcheck="false" />
+    </div>
+
+    <button class="btn" id="btn-tandai" onclick="tandaiTerjual()">
+      <span id="btn-text">Tandai Terjual</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+
+    <div class="alert error"   id="alert-error"></div>
+    <div class="alert success" id="alert-success"></div>
+
+    <hr class="divider">
+
+    <div class="info-box">
+      <strong>Kode rahasia</strong> dikirimkan saat kamu berhasil posting barang di halaman Jual Barang.<br>
+      Format kode: <strong>PBS-XXXXX</strong> (5 karakter setelah tanda hubung).<br><br>
+      Kehilangan kode? Hubungi admin via WhatsApp.
+    </div>
+  </div>
+
+  <!-- Success state -->
+  <div class="success-state" id="success-state">
+    <div class="big-icon">🎊</div>
+    <h2>Selamat, barangmu laku!</h2>
+    <p id="success-msg">Listing sudah dihapus dari Pasar Bekas Solo.<br>Terima kasih sudah jual di sini!</p>
+    <br>
+    <a class="btn-secondary" href="/jual.html">+ Jual barang lain</a>
+    &nbsp;
+    <a class="btn-secondary" href="/">Lihat website</a>
+  </div>
+</div>
+
+<script>
+  // ← Ganti dengan URL deployment Apps Script kamu
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZ9c_8e7RPghRyxqpFd2ne-S_YwaZSAL3NOMfqLy1BpLnM4qPp_YB8JweqUFDV8iKapg/exec';
+
+  async function tandaiTerjual() {
+    const kode = (document.getElementById('kode-input').value || '').trim().toUpperCase();
+    hideAlerts();
+
+    if (!kode) {
+      showError('Kode tidak boleh kosong.');
+      return;
+    }
+    if (!/^PBS-[A-Z0-9]{4,6}$/.test(kode)) {
+      showError('Format kode tidak valid. Contoh yang benar: PBS-4A7X2');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res  = await fetch(`${APPS_SCRIPT_URL}?action=terjual&kode=${encodeURIComponent(kode)}`);
+      const data = await res.json();
+
+      if (data.ok) {
+        const msg = data.nama
+          ? `"${data.nama}" sudah ditandai terjual dan disembunyikan dari listing.`
+          : 'Listing sudah ditandai terjual dan disembunyikan.';
+        document.getElementById('success-msg').innerHTML =
+          msg + '<br>Terima kasih sudah jual di sini!';
+        document.getElementById('form-state').style.display = 'none';
+        document.getElementById('success-state').style.display = 'block';
+      } else {
+        showError(data.pesan || 'Terjadi kesalahan. Coba lagi.');
+      }
+    } catch (err) {
+      showError('Gagal terhubung ke server. Periksa koneksi internet kamu.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Enter key trigger
+  document.getElementById('kode-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tandaiTerjual();
+  });
+
+  // Auto uppercase while typing
+  document.getElementById('kode-input').addEventListener('input', function() {
+    const val = this.value.toUpperCase();
+    // Auto-insert dash after PBS
+    if (val.length === 3 && !val.includes('-')) {
+      this.value = val + '-';
+    } else {
+      this.value = val;
+    }
+  });
+
+  function setLoading(on) {
+    document.getElementById('btn-tandai').disabled = on;
+    document.getElementById('btn-text').textContent = on ? 'Mengecek...' : 'Tandai Terjual';
+    document.getElementById('spinner').style.display = on ? 'block' : 'none';
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('alert-error');
+    el.textContent = '⚠️ ' + msg;
+    el.classList.add('show');
+  }
+
+  function hideAlerts() {
+    document.getElementById('alert-error').classList.remove('show');
+    document.getElementById('alert-success').classList.remove('show');
+  }
+</script>
+</body>
+</html>
