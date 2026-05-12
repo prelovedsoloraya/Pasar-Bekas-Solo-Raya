@@ -454,6 +454,7 @@
       <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#7B79C8;margin-bottom:.4rem">Kode rahasia listing kamu</p>
       <div id="kode-rahasia" style="font-size:28px;font-weight:700;letter-spacing:.12em;color:#3C3489;margin:.25rem 0 .75rem">—</div>
       <p style="font-size:12px;color:#7B79C8;line-height:1.6">📌 Simpan kode ini baik-baik.<br>Kamu butuh ini untuk menandai barang sudah terjual.</p>
+      <p style="font-size:12px;color:#7B79C8;line-height:1.6;margin-top:.5rem">✅ Kalau barangmu sudah laku, segera tandai terjual di <a href="/tandai-terjual.html" style="color:#3C3489;font-weight:600">halaman ini</a> supaya pembeli lain tidak terus-terusan menghubungi kamu.</p>
     </div>
     <button class="btn-back" onclick="resetForm()">+ Jual barang lagi</button>
     <br>
@@ -685,6 +686,22 @@
 
       const kodeEl = document.getElementById("kode-rahasia");
       if (kodeEl && data.kode) kodeEl.textContent = data.kode;
+
+      // Kirim kode ke WA penjual otomatis
+      if (data.kode) {
+        const waNum = wa.replace(/\D/g, '');
+        const nomorWa = waNum.startsWith('0') ? '62' + waNum.slice(1) : waNum;
+        const pesanWa = encodeURIComponent(
+          `Halo! Ini kode rahasia listing kamu di Pasar Bekas Solo 🏮\n\n` +
+          `Barang : *${nama}*\n` +
+          `Kode   : *${data.kode}*\n\n` +
+          `Simpan kode ini baik-baik ya. Kamu butuh kode ini untuk menandai barang sudah terjual di:\n` +
+          `https://pasarbekassolo.my.id/tandai-terjual.html`
+        );
+        setTimeout(() => {
+          window.open(`https://wa.me/${nomorWa}?text=${pesanWa}`, '_blank');
+        }, 600);
+      }
 
       document.getElementById("form-screen").style.display = "none";
       document.getElementById("success-screen").style.display = "block";
