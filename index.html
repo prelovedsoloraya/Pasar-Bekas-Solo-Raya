@@ -205,7 +205,7 @@
       position: fixed;
       bottom: 24px;
       right: 20px;
-      z-index: 50;
+      z-index: 99;
       font-family: 'DM Sans', sans-serif;
       font-size: 14px;
       font-weight: 700;
@@ -600,8 +600,11 @@ loadData();
 (function() {
   const fab = document.getElementById('btn-jual-float');
   if (!fab) return;
+
+  // Navigasi ke jual.html
+  fab.addEventListener('click', () => { window.location.href = 'jual.html'; });
+
   function updateFab() {
-    // Show FAB after scrolling past 120px
     if (window.scrollY > 120) {
       fab.classList.add('visible');
     } else {
@@ -609,7 +612,7 @@ loadData();
     }
   }
   window.addEventListener('scroll', updateFab, { passive: true });
-  updateFab(); // run on load
+  updateFab();
 })();
 </script>
 </body>
