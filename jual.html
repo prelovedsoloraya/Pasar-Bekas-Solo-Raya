@@ -572,14 +572,14 @@
       renderFotoGrid();
 
       const formData = new FormData();
-      formData.append("image", file);
-      formData.append("key", IMGBB_KEY);
+      formData.append("file", file);
+      formData.append("upload_preset", CLOUDINARY_PRESET);
 
       try {
-        const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: formData });
+        const res = await fetch("https://api.cloudinary.com/v1_1/" + CLOUDINARY_CLOUD + "/image/upload", { method: "POST", body: formData });
         const data = await res.json();
-        if (data.success) {
-          fotoList.push(data.data.url);
+        if (data.secure_url) {
+          fotoList.push(data.secure_url);
         } else {
           document.getElementById("upload-status").innerHTML = '<span class="upload-fail">❌ Satu foto gagal diupload</span>';
         }
