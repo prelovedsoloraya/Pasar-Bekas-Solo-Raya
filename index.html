@@ -337,7 +337,8 @@ function parseCSV(text) {
     const obj = {};
     headers.forEach((h, i) => obj[h] = (cols[i] || '').replace(/^"|"$/g, '').trim());
     return obj;
-  }).filter(r => r.nama && !(r.status || '').toLowerCase().includes('terjual'));
+  }).filter(r => r.nama && !(r.status || '').toLowerCase().includes('terjual'))
+    .sort((a, b) => new Date(b.tgl || 0) - new Date(a.tgl || 0));
 }
 
 let allItems = [], activeFilter = 'semua', searchQuery = '', selectedItem = null;
