@@ -357,12 +357,18 @@ async function submitForm() {
 
   const kode='PBS-'+Math.random().toString(36).substr(2,5).toUpperCase();
 
-  // Image beacon — paling reliable, tidak ada CORS, jalan di semua device termasuk Android
   const params = new URLSearchParams({
     action:'tambah', kode, nama, kategori, harga, kondisi,
     lokasi, wa, deskripsi, foto:fotoList.join('|'), emoji
   });
-  new Image().src = APPS_SCRIPT_URL + '?' + params.toString();
+  try {
+    await fetch(APPS_SCRIPT_URL + '?' + params.toString(), {
+      method: 'GET',
+      mode: 'no-cors'
+    });
+  } catch(e) {
+    console.warn('Fetch error:', e);
+  }
 
   document.getElementById('kode-rahasia').textContent=kode;
 
