@@ -212,8 +212,18 @@ input[type="hidden"] { display:none; }
 
     <div class="section">
       <div class="section-label">Foto Barang</div>
-      <div class="foto-grid" id="foto-grid"></div>
-      <div class="foto-status" id="foto-status"></div>
+      <div class="foto-grid" id="foto-grid">
+        <div class="foto-slot" id="slot-0" onclick="document.getElementById('file-input').click()">
+          <span class="upload-icon">📷</span><span>Foto 1</span>
+        </div>
+        <div class="foto-slot" id="slot-1" onclick="document.getElementById('file-input').click()">
+          <span class="upload-icon">📷</span><span>Foto 2</span>
+        </div>
+        <div class="foto-slot" id="slot-2" onclick="document.getElementById('file-input').click()">
+          <span class="upload-icon">📷</span><span>Foto 3</span>
+        </div>
+      </div>
+      <div class="foto-status" id="foto-status">Foto opsional, tapi listing dengan foto lebih cepat laku.</div>
       <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple style="display:none">
     </div>
 
