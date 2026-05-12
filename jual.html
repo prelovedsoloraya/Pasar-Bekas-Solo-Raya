@@ -4,742 +4,396 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jual Barang — Pasar Bekas Solo</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --purple-50: #EEEDFE;
-    --purple-200: #AFA9EC;
-    --purple-600: #534AB7;
-    --purple-800: #3C3489;
-    --gray-50: #F1EFE8;
-    --gray-200: #B4B2A9;
-    --gray-600: #5F5E5A;
-    --green-50: #EAF3DE;
-    --green-800: #3B6D11;
-    --red-50: #FCEBEB;
-    --red-800: #A32D2D;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:  #18181B; --ink2: #52525B; --ink3: #A1A1AA;
+  --line: #E4E4E7; --line2:#D4D4D8;
+  --bg:   #FAFAFA; --white:#FFFFFF;
+  --accent:#534AB7; --accent-pale:#EEEDFE; --accent-mid:#AFA9EC;
+  --green:#16A34A; --green-pale:#DCFCE7;
+  --red:#DC2626;   --red-pale:#FEE2E2;
+  --r: 10px;
+}
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100dvh; padding-bottom:3rem; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+.nav { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; border-bottom:1px solid var(--line); background:var(--white); position:sticky; top:0; z-index:10; }
+.nav-logo { font-family:'Instrument Serif',serif; font-size:17px; color:var(--ink); text-decoration:none; }
+.nav-back { font-size:13px; color:var(--ink3); text-decoration:none; transition:color .15s; }
+.nav-back:hover { color:var(--accent); }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: #F7F6F1;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem 4rem;
-  }
+.container { max-width:560px; margin:0 auto; padding:2rem 1.25rem 0; }
+.page-title { font-family:'Instrument Serif',serif; font-size:clamp(24px,5vw,32px); font-weight:400; line-height:1.15; margin-bottom:.35rem; }
+.page-sub { font-size:14px; color:var(--ink3); margin-bottom:2rem; }
 
-  /* Header */
-  .header {
-    width: 100%;
-    max-width: 560px;
-    margin-bottom: 0.5rem;
-  }
-  .header a {
-    font-size: 13px;
-    color: var(--gray-600);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 1rem;
-  }
-  .header a:hover { color: var(--purple-600); }
-  .header-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    font-weight: 700;
-    color: #1a1a1a;
-    text-align: center;
-    display: block;
-    margin-bottom: 6px;
-  }
-  .header-sub {
-    font-size: 13px;
-    color: var(--gray-600);
-    text-align: center;
-    margin-bottom: 1.5rem;
-    display: block;
-  }
+.section { margin-bottom:1.75rem; }
+.section-label { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink3); margin-bottom:.9rem; padding-bottom:.5rem; border-bottom:1px solid var(--line); }
 
-  /* Card */
-  .card {
-    width: 100%;
-    max-width: 560px;
-    background: #fff;
-    border-radius: 16px;
-    border: 0.5px solid #E0DED7;
-    padding: 2rem;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-  }
+.field { margin-bottom:1rem; }
+label { display:block; font-size:13px; font-weight:600; color:var(--ink2); margin-bottom:5px; }
+label .req { color:var(--accent); margin-left:2px; }
+label .note { font-weight:400; color:var(--ink3); font-size:12px; margin-left:4px; }
 
-  /* Form groups */
-  .form-group {
-    margin-bottom: 1.25rem;
-  }
-  label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: #2a2a2a;
-    margin-bottom: 6px;
-  }
-  label span.req { color: var(--purple-600); margin-left: 2px; }
-  label span.hint { font-weight: 400; color: var(--gray-600); margin-left: 4px; }
+input[type="text"], input[type="number"], input[type="tel"], select {
+  width:100%; padding:10px 13px; border:1.5px solid var(--line2); border-radius:var(--r);
+  font-family:'DM Sans',sans-serif; font-size:14px; color:var(--ink); background:var(--white);
+  outline:none; transition:border-color .15s, box-shadow .15s; appearance:none; -webkit-appearance:none;
+}
+input:focus, select:focus { border-color:var(--accent-mid); box-shadow:0 0 0 3px rgba(83,74,183,.1); }
+input::placeholder { color:var(--ink3); }
+select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center; padding-right:36px; cursor:pointer;
+}
 
-  input[type="text"],
-  input[type="number"],
-  input[type="url"],
-  select,
-  textarea {
-    width: 100%;
-    padding: 10px 14px;
-    border: 0.5px solid #D3D1C7;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: #1a1a1a;
-    background: #fff;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    outline: none;
-    appearance: none;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--purple-600);
-    box-shadow: 0 0 0 3px var(--purple-50);
-  }
-  textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%235F5E5A' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 36px;
-    cursor: pointer;
-  }
+.kondisi-group { display:flex; gap:7px; flex-wrap:wrap; }
+.kondisi-btn { padding:7px 15px; border-radius:999px; border:1.5px solid var(--line2); background:var(--white); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--ink2); cursor:pointer; transition:all .15s; white-space:nowrap; }
+.kondisi-btn:hover { border-color:var(--accent-mid); color:var(--accent); }
+.kondisi-btn.sel { background:var(--accent-pale); border-color:var(--accent); color:var(--accent); font-weight:600; }
+input[type="hidden"] { display:none; }
 
-  /* Emoji picker */
-  .emoji-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 4px;
-  }
-  .emoji-btn {
-    width: 40px; height: 40px;
-    border-radius: 8px;
-    border: 0.5px solid #D3D1C7;
-    background: #fff;
-    font-size: 20px;
-    cursor: pointer;
-    transition: all 0.12s;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .emoji-btn:hover { background: var(--purple-50); border-color: var(--purple-200); }
-  .emoji-btn.selected { background: var(--purple-50); border-color: var(--purple-600); box-shadow: 0 0 0 2px var(--purple-200); }
+.input-prefix { display:flex; align-items:center; border:1.5px solid var(--line2); border-radius:var(--r); overflow:hidden; background:var(--white); transition:border-color .15s, box-shadow .15s; }
+.input-prefix:focus-within { border-color:var(--accent-mid); box-shadow:0 0 0 3px rgba(83,74,183,.1); }
+.input-prefix span { padding:10px 12px; font-size:14px; font-weight:600; color:var(--ink3); background:var(--bg); border-right:1.5px solid var(--line2); flex-shrink:0; }
+.input-prefix input { border:none; border-radius:0; box-shadow:none !important; flex:1; }
+.input-prefix input:focus { border-color:transparent; box-shadow:none !important; }
 
-  /* Kondisi pills */
-  .kondisi-group {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .kondisi-btn {
-    padding: 6px 14px;
-    border-radius: 999px;
-    border: 0.5px solid #D3D1C7;
-    background: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--gray-600);
-    cursor: pointer;
-    transition: all 0.12s;
-  }
-  .kondisi-btn:hover { background: var(--gray-50); }
-  .kondisi-btn[data-val="Baru"].selected { background: #EAF3DE; border-color: #3B6D11; color: #3B6D11; }
-  .kondisi-btn[data-val="Like New"].selected { background: #EEEDFE; border-color: #534AB7; color: #3C3489; }
-  .kondisi-btn[data-val="Bekas Mulus"].selected { background: #E6F1FB; border-color: #185FA5; color: #0C447C; }
-  .kondisi-btn[data-val="Bekas Normal"].selected { background: #FAEEDA; border-color: #854F0B; color: #633806; }
-  .kondisi-btn[data-val="Bekas Rusak Ringan"].selected { background: #FCEBEB; border-color: #A32D2D; color: #791F1F; }
-  .kondisi-hint { font-size: 11px; color: var(--gray-600); margin-top: 8px; line-height: 1.6; padding: 8px 12px; background: var(--gray-50); border-radius: 8px; }
+.foto-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.foto-slot { aspect-ratio:1; border-radius:var(--r); border:1.5px dashed var(--line2); background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:border-color .15s, background .15s; position:relative; overflow:hidden; font-size:12px; color:var(--ink3); gap:5px; }
+.foto-slot:hover { border-color:var(--accent-mid); background:var(--accent-pale); }
+.foto-slot.filled { border-style:solid; border-color:var(--line2); cursor:default; }
+.foto-slot img { width:100%; height:100%; object-fit:cover; }
+.foto-slot .utama-badge { position:absolute; bottom:5px; left:5px; background:rgba(0,0,0,.55); color:#fff; font-size:9px; font-weight:700; padding:2px 6px; border-radius:4px; }
+.foto-slot .del-btn { position:absolute; top:5px; right:5px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:22px; height:22px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.foto-slot .upload-icon { font-size:22px; }
+.foto-status { font-size:12px; color:var(--ink3); margin-top:6px; min-height:16px; }
+.foto-status.ok { color:var(--green); }
 
-  /* Harga prefix */
-  .input-prefix {
-    position: relative;
-  }
-  .input-prefix span {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 14px;
-    color: var(--gray-600);
-    font-weight: 500;
-    pointer-events: none;
-  }
-  .input-prefix input { padding-left: 46px; }
+.error-box { background:var(--red-pale); color:var(--red); border-radius:var(--r); padding:11px 14px; font-size:13px; margin-bottom:1rem; display:none; }
+.error-box.show { display:block; }
 
-  /* Divider */
-  .divider {
-    height: 0.5px;
-    background: #E0DED7;
-    margin: 1.5rem 0;
-  }
+.btn-submit { width:100%; padding:14px; border-radius:var(--r); border:none; background:var(--accent); color:#fff; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:background .15s; }
+.btn-submit:hover { background:#3C3489; }
+.btn-submit:disabled { opacity:.6; cursor:not-allowed; }
+.btn-spinner { width:17px; height:17px; border:2.5px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; display:none; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-  /* Submit button */
-  .btn-submit {
-    width: 100%;
-    padding: 13px;
-    border-radius: 10px;
-    border: none;
-    background: var(--purple-600);
-    color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .btn-submit:hover { background: var(--purple-800); }
-  .btn-submit:active { transform: scale(0.99); }
-  .btn-submit:disabled { background: var(--gray-200); cursor: not-allowed; }
-
-  /* Loading spinner */
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.4);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Alert */
-  .alert {
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 14px;
-    margin-top: 1rem;
-    display: none;
-    align-items: flex-start;
-    gap: 10px;
-    line-height: 1.5;
-  }
-  .alert.success { background: var(--green-50); color: var(--green-800); border: 0.5px solid #C0DD97; display: flex; }
-  .alert.error { background: var(--red-50); color: var(--red-800); border: 0.5px solid #F7C1C1; display: flex; }
-
-  /* Success state */
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 2rem 0;
-  }
-  .success-screen .icon { font-size: 56px; margin-bottom: 1rem; }
-  .success-screen h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    color: #1a1a1a;
-    margin-bottom: 8px;
-  }
-  .success-screen p { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
-  .btn-back {
-    display: inline-block;
-    margin-top: 1.5rem;
-    padding: 10px 24px;
-    border-radius: 999px;
-    background: var(--purple-50);
-    color: var(--purple-800);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    border: 0.5px solid var(--purple-200);
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .btn-back:hover { background: var(--purple-200); }
-
-  .section-title {
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--gray-200);
-    margin-bottom: 1rem;
-  }
-
-  .foto-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .foto-slot {
-    aspect-ratio: 1;
-    border: 1.5px dashed #D3D1C7;
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    transition: border-color 0.15s, background 0.15s;
-    position: relative;
-    background: #fafaf8;
-  }
-  .foto-slot:hover { border-color: var(--purple-600); background: var(--purple-50); }
-  .foto-slot.filled { border-style: solid; border-color: #D3D1C7; cursor: default; }
-  .foto-slot.uploading { border-color: var(--purple-200); background: var(--purple-50); }
-  .foto-slot img { width: 100%; height: 100%; object-fit: cover; }
-  .foto-slot .slot-icon { font-size: 24px; margin-bottom: 4px; pointer-events: none; }
-  .foto-slot .slot-text { font-size: 11px; color: var(--gray-600); pointer-events: none; }
-  .foto-slot .slot-num { font-size: 10px; font-weight: 500; color: var(--purple-600); margin-bottom: 4px; pointer-events: none; }
-  .foto-slot .remove-btn {
-    position: absolute; top: 4px; right: 4px;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.5);
-    color: #fff;
-    border: none;
-    font-size: 11px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    line-height: 1;
-  }
-  .foto-slot .remove-btn:hover { background: rgba(163,45,45,0.85); }
-  .foto-badge {
-    position: absolute; bottom: 4px; left: 4px;
-    background: rgba(0,0,0,0.5);
-    color: #fff;
-    font-size: 9px;
-    padding: 2px 5px;
-    border-radius: 4px;
-  }
-  .upload-progress { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
-  .mini-spinner {
-    width: 18px; height: 18px;
-    border: 2px solid var(--purple-200);
-    border-top-color: var(--purple-600);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-  .upload-success { color: var(--green-800); font-size: 12px; font-weight: 500; }
-  .upload-fail { color: var(--red-800); font-size: 12px; }
+.success-screen { display:none; text-align:center; padding:1rem 0; }
+.success-screen .big { font-size:52px; margin-bottom:1rem; }
+.success-screen h2 { font-family:'Instrument Serif',serif; font-size:26px; font-weight:400; margin-bottom:.5rem; }
+.success-screen p { font-size:14px; color:var(--ink2); line-height:1.6; }
+.kode-box { background:var(--accent-pale); border-radius:14px; padding:1.25rem; margin:1.25rem 0; border:1px solid var(--accent-mid); }
+.kode-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--accent); margin-bottom:.4rem; }
+.kode-value { font-family:'Instrument Serif',serif; font-size:32px; color:#3C3489; letter-spacing:.08em; margin-bottom:.6rem; }
+.kode-hint { font-size:12px; color:#7B79C8; line-height:1.6; }
+.kode-hint a { color:#3C3489; font-weight:600; }
+.btn-row { display:flex; gap:8px; margin-top:1.25rem; }
+.btn-sec { flex:1; padding:11px 16px; border-radius:var(--r); border:1.5px solid var(--line2); background:var(--white); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:var(--ink2); cursor:pointer; text-decoration:none; text-align:center; transition:border-color .15s, color .15s; display:flex; align-items:center; justify-content:center; }
+.btn-sec:hover { border-color:var(--accent-mid); color:var(--accent); }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <a href="/">← Kembali</a>
-  <span class="header-title">🏮 Jual Barang</span>
-  <span class="header-sub">Isi form di bawah · Barang langsung tayang di Pasar Bekas Solo</span>
-</div>
+<nav class="nav">
+  <a class="nav-logo" href="/">🏮 Pasar Bekas Solo</a>
+  <a class="nav-back" href="/">← Kembali</a>
+</nav>
 
-<div class="card">
+<div class="container">
   <div id="form-screen">
-    <p class="section-title">Info Barang</p>
+    <h1 class="page-title">Jual barangmu<br><em>di sini</em></h1>
+    <p class="page-sub">Gratis tayang · Pembeli kontak langsung via WhatsApp</p>
 
-    <div class="form-group">
-      <label>Nama barang <span class="req">*</span></label>
-      <input type="text" id="nama" placeholder="cth: HP Samsung A53 5G, Kursi Jati Antik..." maxlength="80">
-    </div>
-
-    <div class="form-group">
-      <label>Kategori <span class="req">*</span></label>
-      <select id="kategori">
-        <option value="">— Pilih kategori —</option>
-        <option value="elektronik">📱 Elektronik</option>
-        <option value="perabot">🛋️ Perabot</option>
-        <option value="fashion">👗 Fashion</option>
-        <option value="hobi">🎸 Hobi</option>
-        <option value="otomotif">🏍️ Otomotif</option>
-        <option value="lainnya">📦 Lainnya</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Ikon barang <span class="req">*</span></label>
-      <div class="emoji-grid" id="emoji-grid">
-        <button type="button" class="emoji-btn" data-emoji="📱">📱</button>
-        <button type="button" class="emoji-btn" data-emoji="💻">💻</button>
-        <button type="button" class="emoji-btn" data-emoji="📷">📷</button>
-        <button type="button" class="emoji-btn" data-emoji="📺">📺</button>
-        <button type="button" class="emoji-btn" data-emoji="🎮">🎮</button>
-        <button type="button" class="emoji-btn" data-emoji="🛋️">🛋️</button>
-        <button type="button" class="emoji-btn" data-emoji="🪑">🪑</button>
-        <button type="button" class="emoji-btn" data-emoji="🛏️">🛏️</button>
-        <button type="button" class="emoji-btn" data-emoji="👗">👗</button>
-        <button type="button" class="emoji-btn" data-emoji="👟">👟</button>
-        <button type="button" class="emoji-btn" data-emoji="👜">👜</button>
-        <button type="button" class="emoji-btn" data-emoji="🎸">🎸</button>
-        <button type="button" class="emoji-btn" data-emoji="📚">📚</button>
-        <button type="button" class="emoji-btn" data-emoji="🏍️">🏍️</button>
-        <button type="button" class="emoji-btn" data-emoji="🚗">🚗</button>
-        <button type="button" class="emoji-btn" data-emoji="🔧">🔧</button>
-        <button type="button" class="emoji-btn" data-emoji="📦">📦</button>
-        <button type="button" class="emoji-btn" data-emoji="🪴">🪴</button>
+    <div class="section">
+      <div class="section-label">Info Barang</div>
+      <div class="field">
+        <label>Nama barang <span class="req">*</span></label>
+        <input type="text" id="nama" placeholder="cth: Laptop Lenovo ThinkPad X1" maxlength="80">
       </div>
-      <input type="hidden" id="emoji" value="">
-    </div>
-
-    <div class="form-group">
-      <label>Harga <span class="req">*</span></label>
-      <div class="input-prefix">
-        <span>Rp</span>
-        <input type="number" id="harga" placeholder="150000" min="0">
+      <div class="field">
+        <label>Deskripsi <span class="note">— kondisi detail, kelengkapan, alasan jual, dll</span></label>
+        <textarea id="deskripsi" placeholder="cth: Masih mulus, jarang dipakai. Lengkap dengan charger dan dus. Jual karena upgrade." rows="3" style="width:100%;padding:10px 13px;border:1.5px solid var(--line2);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--white);outline:none;resize:vertical;transition:border-color .15s,box-shadow .15s;" onfocus="this.style.borderColor='var(--accent-mid)';this.style.boxShadow='0 0 0 3px rgba(83,74,183,.1)'" onblur="this.style.borderColor='var(--line2)';this.style.boxShadow='none'"></textarea>
+      </div>
+      <div class="field">
+        <label>Kategori <span class="req">*</span></label>
+        <select id="kategori">
+          <option value="">— Pilih kategori —</option>
+          <optgroup label="Elektronik">
+            <option value="hp & tablet">📱 HP &amp; Tablet</option>
+            <option value="laptop & komputer">💻 Laptop &amp; Komputer</option>
+            <option value="kamera">📷 Kamera &amp; Foto</option>
+            <option value="audio">🎧 Audio &amp; Headphone</option>
+            <option value="elektronik lain">🔌 Elektronik Lainnya</option>
+          </optgroup>
+          <optgroup label="Rumah &amp; Gaya Hidup">
+            <option value="perabot">🛋️ Perabot &amp; Furnitur</option>
+            <option value="dapur">🍳 Dapur &amp; Masak</option>
+            <option value="tanaman">🌿 Tanaman &amp; Pot</option>
+          </optgroup>
+          <optgroup label="Fashion">
+            <option value="fashion pria">👔 Fashion Pria</option>
+            <option value="fashion wanita">👗 Fashion Wanita</option>
+            <option value="sepatu & tas">👟 Sepatu &amp; Tas</option>
+            <option value="aksesoris">💍 Aksesoris</option>
+          </optgroup>
+          <optgroup label="Hobi &amp; Olahraga">
+            <option value="buku">📚 Buku &amp; Alat Tulis</option>
+            <option value="hobi & koleksi">🎸 Hobi &amp; Koleksi</option>
+            <option value="olahraga">⚽ Olahraga &amp; Outdoor</option>
+            <option value="mainan">🧸 Mainan &amp; Anak</option>
+          </optgroup>
+          <optgroup label="Kendaraan">
+            <option value="motor">🏍️ Motor</option>
+            <option value="mobil">🚗 Mobil</option>
+            <option value="sparepart">🔧 Sparepart &amp; Aksesoris</option>
+          </optgroup>
+          <option value="lainnya">📦 Lainnya</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Kondisi <span class="req">*</span></label>
+        <div class="kondisi-group" id="kondisi-group">
+          <button type="button" class="kondisi-btn" data-val="Baru">✨ Baru</button>
+          <button type="button" class="kondisi-btn" data-val="Like New">🌟 Like New</button>
+          <button type="button" class="kondisi-btn" data-val="Bekas Mulus">👌 Bekas Mulus</button>
+          <button type="button" class="kondisi-btn" data-val="Bekas Normal">👍 Bekas Normal</button>
+          <button type="button" class="kondisi-btn" data-val="Perlu Perbaikan">🔨 Perlu Perbaikan</button>
+        </div>
+        <input type="hidden" id="kondisi">
+      </div>
+      <div class="field">
+        <label>Harga <span class="req">*</span> <span class="note">— ketik 0 kalau gratis</span></label>
+        <div class="input-prefix">
+          <span>Rp</span>
+          <input type="number" id="harga" placeholder="150000" min="0">
+        </div>
       </div>
     </div>
 
-    <div class="form-group">
-      <label>Kondisi <span class="req">*</span></label>
-      <div class="kondisi-group">
-        <button type="button" class="kondisi-btn" data-val="Baru">🏷️ Baru</button>
-        <button type="button" class="kondisi-btn" data-val="Like New">✨ Like New</button>
-        <button type="button" class="kondisi-btn" data-val="Bekas Mulus">👍 Bekas Mulus</button>
-        <button type="button" class="kondisi-btn" data-val="Bekas Normal">📦 Bekas Normal</button>
-        <button type="button" class="kondisi-btn" data-val="Bekas Rusak Ringan">🔧 Bekas Rusak Ringan</button>
+    <div class="section">
+      <div class="section-label">Lokasi &amp; Kontak</div>
+      <div class="field">
+        <label>Lokasi <span class="req">*</span></label>
+        <select id="lokasi">
+          <option value="">— Pilih area —</option>
+          <optgroup label="Kota Solo">
+            <option>Banjarsari</option>
+            <option>Jebres</option>
+            <option>Laweyan</option>
+            <option>Pasar Kliwon</option>
+            <option>Serengan</option>
+            <option>Manahan</option>
+            <option>Pasar Gede</option>
+            <option>Pasar Klewer</option>
+            <option>Gladak</option>
+            <option>Purwosari</option>
+            <option>Nusukan</option>
+            <option>Mojosongo</option>
+          </optgroup>
+          <optgroup label="Sekitar Solo">
+            <option>Kartasura</option>
+            <option>Grogol</option>
+            <option>Solo Baru</option>
+            <option>Sukoharjo Kota</option>
+            <option>Palur</option>
+            <option>Colomadu</option>
+            <option>Ngemplak</option>
+            <option>Boyolali Kota</option>
+          </optgroup>
+          <option value="Lainnya">Lainnya</option>
+        </select>
       </div>
-      <input type="hidden" id="kondisi" value="">
-      <div class="kondisi-hint" id="kondisi-hint" style="display:none"></div>
-    </div>
-
-    <div class="divider"></div>
-    <p class="section-title">Lokasi & Kontak</p>
-
-    <div class="form-group">
-      <label>Lokasi <span class="req">*</span> <span class="hint">(area di Solo)</span></label>
-      <input type="text" id="lokasi" placeholder="cth: Laweyan, Banjarsari, Pasar Gede...">
-    </div>
-
-    <div class="form-group">
-      <label>No. WhatsApp <span class="req">*</span></label>
-      <input type="text" id="wa" placeholder="cth: 08123456789" maxlength="20">
-    </div>
-
-    <div class="divider"></div>
-    <p class="section-title">Foto Barang</p>
-
-    <div class="form-group">
-      <label>Upload foto <span class="hint">(maks 3 foto, jpg/png, maks 5MB per foto)</span></label>
-      <div class="foto-grid" id="foto-grid">
-        <!-- Slot foto akan dirender oleh JS -->
+      <div class="field">
+        <label>No. WhatsApp <span class="req">*</span></label>
+        <input type="tel" id="wa" placeholder="cth: 08123456789" maxlength="16">
       </div>
-      <input type="file" id="foto-file" accept="image/*" multiple style="display:none" onchange="handleFotoUpload(this)">
-      <div id="upload-status" style="font-size:12px;margin-top:8px;"></div>
     </div>
 
+    <div class="section">
+      <div class="section-label">Foto Barang</div>
+      <div class="foto-grid" id="foto-grid"></div>
+      <div class="foto-status" id="foto-status"></div>
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display:none">
+    </div>
+
+    <div class="error-box" id="error-box"></div>
     <button class="btn-submit" id="btn-submit" onclick="submitForm()">
       <span id="btn-text">Tayang Sekarang →</span>
-      <div class="spinner" id="spinner"></div>
+      <div class="btn-spinner" id="spinner"></div>
     </button>
-
-    <div class="alert" id="alert-error">
-      ⚠️ <span id="error-msg">Terjadi kesalahan, coba lagi.</span>
-    </div>
+    <p style="font-size:11px;color:var(--ink3);text-align:center;margin-top:.75rem;line-height:1.6">
+      Dengan posting, kamu setuju info yang dimasukkan sudah benar.<br>Pembeli menghubungi kamu langsung via WhatsApp.
+    </p>
   </div>
 
   <div class="success-screen" id="success-screen">
-    <div class="icon">🎉</div>
+    <div class="big">🎉</div>
     <h2>Barang berhasil ditayangkan!</h2>
     <p>Iklanmu sudah masuk ke Pasar Bekas Solo.<br>Pembeli bisa langsung hubungi kamu via WhatsApp.</p>
-    <div style="background:#EEEDFE;border-radius:12px;padding:1.25rem;margin:1.25rem 0;text-align:center">
-      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#7B79C8;margin-bottom:.4rem">Kode rahasia listing kamu</p>
-      <div id="kode-rahasia" style="font-size:28px;font-weight:700;letter-spacing:.12em;color:#3C3489;margin:.25rem 0 .75rem">—</div>
-      <p style="font-size:12px;color:#7B79C8;line-height:1.6">📌 Simpan kode ini baik-baik.<br>Kamu butuh ini untuk menandai barang sudah terjual.</p>
-      <p style="font-size:12px;color:#7B79C8;line-height:1.6;margin-top:.5rem">✅ Kalau barangmu sudah laku, segera tandai terjual di <a href="/tandai-terjual.html" style="color:#3C3489;font-weight:600">halaman ini</a> supaya pembeli lain tidak terus-terusan menghubungi kamu.</p>
+    <div class="kode-box">
+      <div class="kode-label">Kode rahasia listing kamu</div>
+      <div class="kode-value" id="kode-rahasia">—</div>
+      <div class="kode-hint">
+        📌 Simpan kode ini baik-baik.<br>
+        ✅ Kalau barang sudah laku, tandai di <a href="/tandai-terjual.html">halaman ini</a> supaya pembeli lain tidak terus menghubungimu.
+      </div>
     </div>
-    <button class="btn-back" onclick="resetForm()">+ Jual barang lagi</button>
-    <br>
-    <a class="btn-back" href="/" style="margin-top:8px">Lihat website →</a>
+    <div class="btn-row">
+      <button class="btn-sec" onclick="resetForm()">+ Jual lagi</button>
+      <a class="btn-sec" href="/">Lihat website</a>
+    </div>
   </div>
 </div>
 
 <script>
+const CLOUDINARY_CLOUD  = 'dis1qi0tz';
+const CLOUDINARY_PRESET = 'pbs_default';
+const APPS_SCRIPT_URL   = 'https://script.google.com/macros/s/AKfycbxGImXkHfYwv1bK8QdHYfk-jmXjTsIG_xyzhxEzG4Z1XHceFVaiPd5VZhNg0f2NXchfPQ/exec';
+const MAX_FOTO = 3;
+let fotoList = [], uploadingCount = 0;
 
-  const CLOUDINARY_CLOUD = "dis1qi0tz";
-  const CLOUDINARY_PRESET = "pbs_default";
-  const MAX_FOTO = 3;
-  let fotoList = [];
-  let uploadingCount = 0;
+const EMOJI_MAP = {
+  'hp & tablet':'📱','laptop & komputer':'💻','kamera':'📷','audio':'🎧',
+  'elektronik lain':'🔌','perabot':'🛋️','dapur':'🍳','tanaman':'🌿',
+  'fashion pria':'👔','fashion wanita':'👗','sepatu & tas':'👟','aksesoris':'💍',
+  'buku':'📚','hobi & koleksi':'🎸','olahraga':'⚽','mainan':'🧸',
+  'motor':'🏍️','mobil':'🚗','sparepart':'🔧','lainnya':'📦'
+};
 
-  function renderFotoGrid() {
-    const grid = document.getElementById("foto-grid");
-    grid.innerHTML = "";
+document.getElementById('kondisi-group').addEventListener('click', e => {
+  const btn = e.target.closest('.kondisi-btn');
+  if (!btn) return;
+  document.querySelectorAll('.kondisi-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  document.getElementById('kondisi').value = btn.dataset.val;
+});
 
-    fotoList.forEach(function(url, i) {
-      const slot = document.createElement("div");
-      slot.className = "foto-slot filled";
-      const badge = i === 0 ? '<span class="foto-badge">Utama</span>' : '';
-      slot.innerHTML = '<img src="' + url + '" alt="Foto ' + (i+1) + '">' + badge +
-        '<button class="remove-btn" onclick="removeFoto(' + i + ')" title="Hapus foto">&#x2715;</button>';
-      grid.appendChild(slot);
-    });
-
-    for (let u = 0; u < uploadingCount; u++) {
-      const slot = document.createElement("div");
-      slot.className = "foto-slot uploading";
-      slot.innerHTML = '<div class="upload-progress"><div class="mini-spinner"></div><span style="font-size:10px;color:var(--gray-600)">Upload...</span></div>';
-      grid.appendChild(slot);
-    }
-
-    if (fotoList.length + uploadingCount < MAX_FOTO) {
-      const slot = document.createElement("div");
-      slot.className = "foto-slot";
-      const num = fotoList.length + uploadingCount + 1;
-      const label = (fotoList.length === 0 && uploadingCount === 0) ? "Foto utama" : "Foto " + num;
-      slot.innerHTML = '<div class="slot-num">' + label + '</div><div class="slot-icon">&#x1F4F7;</div><div class="slot-text">Klik tambah</div>';
-      slot.onclick = function() { document.getElementById("foto-file").click(); };
-      grid.appendChild(slot);
-    }
-
-    const status = document.getElementById("upload-status");
-    if (fotoList.length > 0) {
-      const sisa = MAX_FOTO - fotoList.length;
-      status.innerHTML = '<span class="upload-success">&#x2705; ' + fotoList.length + ' foto terupload' + (sisa > 0 ? ' &middot; bisa tambah ' + sisa + ' lagi' : ' &middot; maksimal tercapai') + '</span>';
-    } else if (uploadingCount === 0) {
-      status.innerHTML = "";
-    }
-  }
-
-  function removeFoto(idx) {
-    fotoList.splice(idx, 1);
-    renderFotoGrid();
-
-  async function handleFotoUpload(input) {
-    const files = Array.from(input.files);
-    input.value = "";
-    if (!files.length) return;
-
-    const remaining = MAX_FOTO - fotoList.length - uploadingCount;
-    const toUpload = files.slice(0, remaining);
-
-    if (files.length > remaining) {
-      document.getElementById("upload-status").innerHTML = '<span class="upload-fail">&#x26A0;&#xFE0F; Hanya ' + remaining + ' slot tersisa</span>';
-    }
-
-    for (let f = 0; f < toUpload.length; f++) {
-      const file = toUpload[f];
-      if (file.size > 5 * 1024 * 1024) {
-        document.getElementById("upload-status").innerHTML = '<span class="upload-fail">&#x26A0;&#xFE0F; Foto melebihi 5MB, dilewati</span>';
-        continue;
-      }
-      uploadingCount++;
-      renderFotoGrid();
-
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", CLOUDINARY_PRESET);
-
-      try {
-        const res = await fetch("https://api.cloudinary.com/v1_1/" + CLOUDINARY_CLOUD + "/image/upload", { method: "POST", body: formData });
-        const data = await res.json();
-        if (data.secure_url) {
-          fotoList.push(data.secure_url);
-        } else {
-          document.getElementById("upload-status").innerHTML = '<span class="upload-fail">&#x274C; Satu foto gagal diupload</span>';
-        }
-      } catch(e) {
-        document.getElementById("upload-status").innerHTML = '<span class="upload-fail">&#x274C; Gagal upload, cek koneksi</span>';
-      }
-      uploadingCount--;
-      renderFotoGrid();
-    }
-  }
-
-  renderFotoGrid();
-  }
-
-  async function handleFotoUpload(input) {
-    const files = Array.from(input.files);
-    input.value = "";
-    if (!files.length) return;
-
-    const remaining = MAX_FOTO - fotoList.length - uploadingCount;
-    const toUpload = files.slice(0, remaining);
-
-    if (files.length > remaining) {
-      document.getElementById("upload-status").innerHTML = '<span class="upload-fail">&#x26A0;&#xFE0F; Hanya ' + remaining + ' slot tersisa</span>';
-    }
-
-    for (const file of toUpload) {
-      if (file.size > 5 * 1024 * 1024) {
-        document.getElementById("upload-status").innerHTML = '<span class="upload-fail">⚠️ Salah satu foto melebihi 5MB, dilewati</span>';
-        continue;
-      }
-      uploadingCount++;
-      renderFotoGrid();
-
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", CLOUDINARY_PRESET);
-
-      try {
-        const res = await fetch("https://api.cloudinary.com/v1_1/" + CLOUDINARY_CLOUD + "/image/upload", { method: "POST", body: formData });
-        const data = await res.json();
-        if (data.secure_url) {
-          fotoList.push(data.secure_url);
-        } else {
-          document.getElementById("upload-status").innerHTML = '<span class="upload-fail">❌ Satu foto gagal diupload</span>';
-        }
-      } catch(e) {
-        document.getElementById("upload-status").innerHTML = '<span class="upload-fail">❌ Gagal upload, cek koneksi</span>';
-      }
-      uploadingCount--;
-      renderFotoGrid();
-    }
-  }
-
-  renderFotoGrid();
-
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzA-DAohGlyarjF-uHC4mN18lySw6vgW1xfUprRSArEKT2yWgY2aKvp0vwkTT6xRP9BiA/exec";
-
-  let selectedEmoji = "";
-  let selectedKondisi = "";
-
-  // Emoji picker
-  document.querySelectorAll(".emoji-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      selectedEmoji = btn.dataset.emoji;
-      document.getElementById("emoji").value = selectedEmoji;
-    });
+function renderFotoGrid() {
+  const grid = document.getElementById('foto-grid');
+  grid.innerHTML = '';
+  fotoList.forEach((url, i) => {
+    const slot = document.createElement('div');
+    slot.className = 'foto-slot filled';
+    const img = document.createElement('img');
+    img.src = url; img.referrerPolicy = 'no-referrer';
+    slot.appendChild(img);
+    if (i === 0) { const b = document.createElement('div'); b.className='utama-badge'; b.textContent='Utama'; slot.appendChild(b); }
+    const del = document.createElement('button');
+    del.className = 'del-btn'; del.innerHTML = '×';
+    del.onclick = () => { fotoList.splice(i,1); renderFotoGrid(); };
+    slot.appendChild(del);
+    grid.appendChild(slot);
   });
+  if (fotoList.length < MAX_FOTO) {
+    const add = document.createElement('div');
+    add.className = 'foto-slot';
+    add.innerHTML = `<span class="upload-icon">📷</span><span>Foto ${fotoList.length+1}</span>`;
+    add.onclick = () => document.getElementById('file-input').click();
+    grid.appendChild(add);
+  }
+  const st = document.getElementById('foto-status');
+  if (!fotoList.length) { st.textContent='Foto opsional, tapi listing dengan foto lebih cepat laku.'; st.className='foto-status'; }
+  else { st.textContent=`✓ ${fotoList.length} foto · bisa tambah ${MAX_FOTO-fotoList.length} lagi`; st.className='foto-status ok'; }
+}
 
-  // Kondisi picker
-  const kondisiHints = {"Baru": "Barang masih tersegel / belum pernah dipakai sama sekali.", "Like New": "Pernah dipakai tapi kondisi sangat mulus, hampir seperti baru. Termasuk kategori bekas.", "Bekas Mulus": "Bekas pakai, ada sedikit tanda pemakaian tapi fungsi normal & tidak ada cacat berarti.", "Bekas Normal": "Bekas pakai dengan tanda pemakaian yang terlihat, fungsi masih normal.", "Bekas Rusak Ringan": "Ada kerusakan ringan yang perlu diperbaiki, namun masih bisa digunakan."};
-  document.querySelectorAll(".kondisi-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".kondisi-btn").forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      selectedKondisi = btn.dataset.val;
-      document.getElementById("kondisi").value = selectedKondisi;
-      const hint = document.getElementById("kondisi-hint");
-      hint.textContent = kondisiHints[selectedKondisi] || "";
-      hint.style.display = "block";
-    });
+document.getElementById('file-input').addEventListener('change', async function() {
+  for (const file of Array.from(this.files)) {
+    if (fotoList.length >= MAX_FOTO) break;
+    if (file.size > 5*1024*1024) { showError('Ukuran foto maks 5MB.'); continue; }
+    await uploadFoto(file);
+  }
+  this.value = '';
+});
+
+async function uploadFoto(file) {
+  uploadingCount++;
+  const st = document.getElementById('foto-status');
+  st.textContent = 'Mengupload…'; st.className = 'foto-status';
+  const fd = new FormData();
+  fd.append('file', file); fd.append('upload_preset', CLOUDINARY_PRESET);
+  try {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,{method:'POST',body:fd});
+    const d = await res.json();
+    if (d.secure_url) fotoList.push(d.secure_url);
+    else showError('Gagal upload foto. Coba lagi.');
+  } catch { showError('Gagal upload foto.'); }
+  finally { uploadingCount--; renderFotoGrid(); }
+}
+
+async function submitForm() {
+  hideError();
+  const nama=document.getElementById('nama').value.trim();
+  const kategori=document.getElementById('kategori').value;
+  const harga=document.getElementById('harga').value.trim();
+  const kondisi=document.getElementById('kondisi').value;
+  const lokasi=document.getElementById('lokasi').value;
+  const wa=document.getElementById('wa').value.trim();
+  const deskripsi=document.getElementById('deskripsi').value.trim();
+  const emoji=EMOJI_MAP[kategori]||'📦';
+
+  if (!nama)    return showError('Nama barang wajib diisi.');
+  if (!kategori) return showError('Pilih kategori barang.');
+  if (!kondisi)  return showError('Pilih kondisi barang.');
+  if (!harga||isNaN(harga)||Number(harga)<0) return showError('Masukkan harga yang valid. Ketik 0 kalau gratis.');
+  if (!lokasi)   return showError('Pilih lokasi.');
+  if (!wa)       return showError('No. WhatsApp wajib diisi.');
+  if (uploadingCount>0) return showError('Foto sedang diupload, tunggu sebentar…');
+
+  const btn=document.getElementById('btn-submit');
+  btn.disabled=true;
+  document.getElementById('btn-text').textContent='Mengirim…';
+  document.getElementById('spinner').style.display='block';
+
+  const kode='PBS-'+Math.random().toString(36).substr(2,5).toUpperCase();
+
+  const iframe=document.createElement('iframe');
+  iframe.name='hs'; iframe.style.display='none'; document.body.appendChild(iframe);
+  const form=document.createElement('form');
+  form.method='GET'; form.action=APPS_SCRIPT_URL; form.target='hs';
+  const fields={action:'tambah',kode,nama,kategori,harga,kondisi,lokasi,wa,deskripsi,foto:fotoList.join('|'),emoji};
+  Object.entries(fields).forEach(([k,v])=>{
+    const inp=document.createElement('input'); inp.type='hidden'; inp.name=k; inp.value=v; form.appendChild(inp);
   });
+  document.body.appendChild(form); form.submit();
+  setTimeout(()=>{ try{document.body.removeChild(form);document.body.removeChild(iframe);}catch{} },5000);
 
-  function showError(msg) {
-    const el = document.getElementById("alert-error");
-    document.getElementById("error-msg").textContent = msg;
-    el.className = "alert error";
-  }
+  document.getElementById('kode-rahasia').textContent=kode;
 
-  function hideError() {
-    document.getElementById("alert-error").className = "alert";
-  }
+  const waNum=wa.replace(/\D/g,'');
+  const nomorWa=waNum.startsWith('0')?'62'+waNum.slice(1):waNum;
+  const pesanWa=encodeURIComponent(`Halo! Ini kode rahasia listing kamu di Pasar Bekas Solo 🏮\n\nBarang : *${nama}*\nKode   : *${kode}*\n\nSimpan kode ini ya. Kalau barang sudah laku, tandai terjual di:\nhttps://pasarbekassolo.my.id/tandai-terjual.html`);
+  setTimeout(()=>window.open(`https://wa.me/${nomorWa}?text=${pesanWa}`,'_blank'),600);
 
-  async function submitForm() {
-    hideError();
+  document.getElementById('form-screen').style.display='none';
+  document.getElementById('success-screen').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-    const nama = document.getElementById("nama").value.trim();
-    const kategori = document.getElementById("kategori").value;
-    const harga = document.getElementById("harga").value.trim();
-    const kondisi = document.getElementById("kondisi").value;
-    const lokasi = document.getElementById("lokasi").value.trim();
-    const wa = document.getElementById("wa").value.trim();
-    const foto = fotoList.join(",");
-    const emoji = document.getElementById("emoji").value;
+function resetForm() {
+  document.getElementById('form-screen').style.display='block';
+  document.getElementById('success-screen').style.display='none';
+  document.querySelectorAll('#form-screen input:not([type=hidden])').forEach(el=>el.value='');
+  document.getElementById('deskripsi').value='';
+  document.getElementById('kategori').value='';
+  document.getElementById('lokasi').value='';
+  document.getElementById('kondisi').value='';
+  document.querySelectorAll('.kondisi-btn').forEach(b=>b.classList.remove('sel'));
+  fotoList=[]; renderFotoGrid();
+  document.getElementById('btn-submit').disabled=false;
+  document.getElementById('btn-text').textContent='Tayang Sekarang →';
+  document.getElementById('spinner').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-    if (!nama) return showError("Nama barang wajib diisi.");
-    if (!kategori) return showError("Pilih kategori barang.");
-    if (!emoji) return showError("Pilih ikon untuk barangmu.");
-    if (!harga || isNaN(harga) || Number(harga) < 0) return showError("Masukkan harga yang valid.");
-    if (!kondisi) return showError("Pilih kondisi barang.");
-    if (!lokasi) return showError("Lokasi wajib diisi.");
-    if (uploadingCount > 0) return showError("Foto sedang diupload, tunggu sebentar...");
-    if (!wa) return showError("No. WhatsApp wajib diisi.");
+function showError(msg) {
+  const el=document.getElementById('error-box');
+  el.textContent='⚠️ '+msg; el.classList.add('show');
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function hideError() { document.getElementById('error-box').classList.remove('show'); }
 
-    const btn = document.getElementById("btn-submit");
-    const btnText = document.getElementById("btn-text");
-    const spinner = document.getElementById("spinner");
-    btn.disabled = true;
-    btnText.textContent = "Mengirim...";
-    spinner.style.display = "block";
-
-    const payload = { nama, kategori, harga: Number(harga), kondisi, lokasi, wa, foto, emoji };
-
-    try {
-      // Generate kode di client
-      const kode = 'PBS-' + Math.random().toString(36).substr(2, 5).toUpperCase();
-
-      // Kirim ke Apps Script via GET — tidak ada CORS issue
-      const params = new URLSearchParams({
-        action : 'tambah',
-        kode   : kode,
-        nama   : nama,
-        kategori: kategori,
-        harga  : harga,
-        kondisi: kondisi,
-        lokasi : lokasi,
-        wa     : wa,
-        foto   : fotoList.join('|'),
-        emoji  : emoji || ''
-      });
-      fetch(APPS_SCRIPT_URL + '?' + params.toString())
-        .catch(() => {}); // silent — user sudah dapat kode
-
-      // Tampilkan kode di success screen
-      const kodeEl = document.getElementById("kode-rahasia");
-      if (kodeEl) kodeEl.textContent = kode;
-
-      // Kirim kode ke WA penjual otomatis
-      const waNum  = wa.replace(/\D/g, '');
-      const nomorWa = waNum.startsWith('0') ? '62' + waNum.slice(1) : waNum;
-      const pesanWa = encodeURIComponent(
-        `Halo! Ini kode rahasia listing kamu di Pasar Bekas Solo 🏮\n\n` +
-        `Barang : *${nama}*\n` +
-        `Kode   : *${kode}*\n\n` +
-        `Simpan kode ini baik-baik ya. Kamu butuh kode ini untuk menandai barang sudah terjual di:\n` +
-        `https://pasarbekassolo.my.id/tandai-terjual.html`
-      );
-      setTimeout(() => {
-        window.open(`https://wa.me/${nomorWa}?text=${pesanWa}`, '_blank');
-      }, 600);
-
-      document.getElementById("form-screen").style.display = "none";
-      document.getElementById("success-screen").style.display = "block";
-    } catch (err) {
-      showError("Gagal mengirim data. Periksa koneksi internet kamu.");
-      btn.disabled = false;
-      btnText.textContent = "Tayang Sekarang →";
-      spinner.style.display = "none";
-    }
-  }
-
-  function resetForm() {
-    document.getElementById("form-screen").style.display = "block";
-    document.getElementById("success-screen").style.display = "none";
-    document.getElementById("nama").value = "";
-    document.getElementById("kategori").value = "";
-    document.getElementById("harga").value = "";
-    document.getElementById("kondisi").value = "";
-    document.getElementById("lokasi").value = "";
-    document.getElementById("wa").value = "";
-    fotoList = [];
-    uploadingCount = 0;
-    document.getElementById("foto-file").value = "";
-    document.getElementById("upload-status").innerHTML = "";
-    renderFotoGrid();
-    document.getElementById("emoji").value = "";
-    document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
-    document.querySelectorAll(".kondisi-btn").forEach(b => b.classList.remove("selected"));
-    selectedEmoji = "";
-    selectedKondisi = "";
-    document.getElementById("btn-submit").disabled = false;
-    document.getElementById("btn-text").textContent = "Tayang Sekarang →";
-    document.getElementById("spinner").style.display = "none";
-    hideError();
-  }
+renderFotoGrid();
 </script>
 </body>
 </html>
