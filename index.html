@@ -170,6 +170,7 @@
     .modal-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; line-height: 1.2; }
     .modal-price { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--purple); margin: 10px 0; }
     .modal-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--text2); margin-bottom: 18px; }
+    .modal-desc { font-size:13px; color:#5F5E5A; line-height:1.6; margin-bottom:14px; white-space:pre-wrap; }
     .modal-meta span { display: flex; align-items: center; gap: 4px; background: var(--bg2); padding: 4px 10px; border-radius: 999px; }
     .modal-actions { display: flex; gap: 8px; }
     .modal-btn { flex: 1; padding: 11px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
@@ -221,11 +222,25 @@
 
   <div class="filters" id="filters">
     <button class="filter-btn active" data-cat="semua">Semua</button>
-    <button class="filter-btn" data-cat="elektronik">📱 Elektronik</button>
+    <button class="filter-btn" data-cat="hp & tablet">📱 HP &amp; Tablet</button>
+    <button class="filter-btn" data-cat="laptop & komputer">💻 Laptop</button>
+    <button class="filter-btn" data-cat="kamera">📷 Kamera</button>
+    <button class="filter-btn" data-cat="audio">🎧 Audio</button>
+    <button class="filter-btn" data-cat="elektronik lain">🔌 Elektronik Lain</button>
     <button class="filter-btn" data-cat="perabot">🛋️ Perabot</button>
-    <button class="filter-btn" data-cat="fashion">👗 Fashion</button>
-    <button class="filter-btn" data-cat="hobi">🎸 Hobi</button>
-    <button class="filter-btn" data-cat="otomotif">🏍️ Otomotif</button>
+    <button class="filter-btn" data-cat="dapur">🍳 Dapur</button>
+    <button class="filter-btn" data-cat="tanaman">🌿 Tanaman</button>
+    <button class="filter-btn" data-cat="fashion pria">👔 Fashion Pria</button>
+    <button class="filter-btn" data-cat="fashion wanita">👗 Fashion Wanita</button>
+    <button class="filter-btn" data-cat="sepatu & tas">👟 Sepatu &amp; Tas</button>
+    <button class="filter-btn" data-cat="aksesoris">💍 Aksesoris</button>
+    <button class="filter-btn" data-cat="buku">📚 Buku</button>
+    <button class="filter-btn" data-cat="hobi & koleksi">🎸 Hobi</button>
+    <button class="filter-btn" data-cat="olahraga">⚽ Olahraga</button>
+    <button class="filter-btn" data-cat="mainan">🧸 Mainan</button>
+    <button class="filter-btn" data-cat="motor">🏍️ Motor</button>
+    <button class="filter-btn" data-cat="mobil">🚗 Mobil</button>
+    <button class="filter-btn" data-cat="sparepart">🔧 Sparepart</button>
     <button class="filter-btn" data-cat="lainnya">📦 Lainnya</button>
   </div>
 
@@ -255,6 +270,8 @@
       <div class="modal-name"  id="modal-name"></div>
       <div class="modal-price" id="modal-price"></div>
       <div class="modal-meta"  id="modal-meta"></div>
+      <div class="modal-desc"  id="modal-desc"></div>
+      <div class="modal-desc"  id="modal-desc"></div>
       <div class="modal-actions">
         <button class="modal-btn" id="modal-close">Tutup</button>
         <button class="modal-btn primary" id="modal-wa">💬 Tanya via WA</button>
@@ -305,6 +322,21 @@ function getFotos(item) {
   return item.foto.split(',').map(s => s.trim()).filter(Boolean);
 }
 
+
+const EMOJI_MAP = {
+  'hp & tablet':'📱','laptop & komputer':'💻','kamera':'📷','audio':'🎧',
+  'elektronik lain':'🔌','perabot':'🛋️','dapur':'🍳','tanaman':'🌿',
+  'fashion pria':'👔','fashion wanita':'👗','sepatu & tas':'👟','aksesoris':'💍',
+  'buku':'📚','hobi & koleksi':'🎸','olahraga':'⚽','mainan':'🧸',
+  'motor':'🏍️','mobil':'🚗','sparepart':'🔧','lainnya':'📦',
+  // legacy
+  'elektronik':'📱','fashion':'👗','hobi':'🎸','otomotif':'🏍️'
+};
+
+function getEmoji(item) {
+  return EMOJI_MAP[(item.kategori||'').toLowerCase()] || item.emoji || '📦';
+}
+
 function renderCard(item) {
   const card = document.createElement('div');
   card.className = 'card';
@@ -321,7 +353,7 @@ function renderCard(item) {
     img.onerror = () => { imgWrap.innerHTML = item.emoji || '📦'; };
     imgWrap.appendChild(img);
   } else {
-    imgWrap.textContent = item.emoji || '📦';
+    imgWrap.textContent = getEmoji(item);
   }
 
   const condLabel = item.kondisi || 'Bekas Normal';
@@ -394,6 +426,12 @@ function openModal(item) {
   document.getElementById('modal-meta').innerHTML =
     '<span>📍 ' + (item.lokasi || '—') + '</span>' +
     '<span class="card-cond ' + condCls + '">' + condLabel + '</span>';
+
+  const descEl = document.getElementById('modal-desc');
+  if (descEl) {
+    descEl.textContent = (item.deskripsi || '').trim();
+    descEl.style.display = (item.deskripsi || '').trim() ? 'block' : 'none';
+  }
 
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
