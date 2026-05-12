@@ -669,39 +669,35 @@
     const payload = { nama, kategori, harga: Number(harga), kondisi, lokasi, wa, foto, emoji };
 
     try {
-      const res  = await fetch(APPS_SCRIPT_URL, {
+      // Generate kode di client — tidak perlu tunggu response server
+      const kode = 'PBS-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+      payload.kode = kode;
+
+      // Kirim ke Apps Script (no-cors — kita tidak perlu baca response-nya)
+      fetch(APPS_SCRIPT_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
-      });
-      const data = await res.json();
+      }).catch(() => {}); // silent — user sudah dapat kode
 
-      if (!data.ok) {
-        showError(data.pesan || "Gagal menyimpan. Coba lagi.");
-        btn.disabled = false;
-        btnText.textContent = "Tayang Sekarang →";
-        spinner.style.display = "none";
-        return;
-      }
-
+      // Tampilkan kode di success screen
       const kodeEl = document.getElementById("kode-rahasia");
-      if (kodeEl && data.kode) kodeEl.textContent = data.kode;
+      if (kodeEl) kodeEl.textContent = kode;
 
       // Kirim kode ke WA penjual otomatis
-      if (data.kode) {
-        const waNum = wa.replace(/\D/g, '');
-        const nomorWa = waNum.startsWith('0') ? '62' + waNum.slice(1) : waNum;
-        const pesanWa = encodeURIComponent(
-          `Halo! Ini kode rahasia listing kamu di Pasar Bekas Solo 🏮\n\n` +
-          `Barang : *${nama}*\n` +
-          `Kode   : *${data.kode}*\n\n` +
-          `Simpan kode ini baik-baik ya. Kamu butuh kode ini untuk menandai barang sudah terjual di:\n` +
-          `https://pasarbekassolo.my.id/tandai-terjual.html`
-        );
-        setTimeout(() => {
-          window.open(`https://wa.me/${nomorWa}?text=${pesanWa}`, '_blank');
-        }, 600);
-      }
+      const waNum  = wa.replace(/\D/g, '');
+      const nomorWa = waNum.startsWith('0') ? '62' + waNum.slice(1) : waNum;
+      const pesanWa = encodeURIComponent(
+        `Halo! Ini kode rahasia listing kamu di Pasar Bekas Solo 🏮\n\n` +
+        `Barang : *${nama}*\n` +
+        `Kode   : *${kode}*\n\n` +
+        `Simpan kode ini baik-baik ya. Kamu butuh kode ini untuk menandai barang sudah terjual di:\n` +
+        `https://pasarbekassolo.my.id/tandai-terjual.html`
+      );
+      setTimeout(() => {
+        window.open(`https://wa.me/${nomorWa}?text=${pesanWa}`, '_blank');
+      }, 600);
 
       document.getElementById("form-screen").style.display = "none";
       document.getElementById("success-screen").style.display = "block";
