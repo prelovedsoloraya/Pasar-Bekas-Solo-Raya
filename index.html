@@ -199,6 +199,29 @@
       .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     }
     @media (max-width: 380px) { .grid { grid-template-columns: 1fr; } }
+
+    /* ── Floating Jual button ─────────────────────────────────── */
+    .btn-jual-float {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      z-index: 50;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px 22px;
+      border-radius: 999px;
+      background: var(--purple);
+      color: var(--purple-pale);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(83,74,183,0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-jual-float.visible { opacity: 1; pointer-events: all; }
+    .btn-jual-float:active { transform: scale(0.96); }
   </style>
 </head>
 
@@ -262,6 +285,8 @@
 </div>
 
 <!-- Modal -->
+<button class="btn-jual-float" id="btn-jual-float">+ Jual Barang</button>
+
 <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
   <div class="modal" id="modal">
     <div class="modal-foto-wrap" id="modal-foto-wrap"></div>
@@ -570,6 +595,22 @@ async function loadData() {
 }
 
 loadData();
+
+// ── Floating button visibility on scroll ──────────────────────────
+(function() {
+  const fab = document.getElementById('btn-jual-float');
+  if (!fab) return;
+  function updateFab() {
+    // Show FAB after scrolling past 120px
+    if (window.scrollY > 120) {
+      fab.classList.add('visible');
+    } else {
+      fab.classList.remove('visible');
+    }
+  }
+  window.addEventListener('scroll', updateFab, { passive: true });
+  updateFab(); // run on load
+})();
 </script>
 </body>
 </html>
