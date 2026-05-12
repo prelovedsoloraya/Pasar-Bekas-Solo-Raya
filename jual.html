@@ -214,7 +214,7 @@ input[type="hidden"] { display:none; }
       <div class="section-label">Foto Barang</div>
       <div class="foto-grid" id="foto-grid"></div>
       <div class="foto-status" id="foto-status"></div>
-      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display:none">
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple style="display:none">
     </div>
 
     <div class="error-box" id="error-box"></div>
@@ -347,16 +347,12 @@ async function submitForm() {
 
   const kode='PBS-'+Math.random().toString(36).substr(2,5).toUpperCase();
 
-  const iframe=document.createElement('iframe');
-  iframe.name='hs'; iframe.style.display='none'; document.body.appendChild(iframe);
-  const form=document.createElement('form');
-  form.method='GET'; form.action=APPS_SCRIPT_URL; form.target='hs';
-  const fields={action:'tambah',kode,nama,kategori,harga,kondisi,lokasi,wa,deskripsi,foto:fotoList.join('|'),emoji};
-  Object.entries(fields).forEach(([k,v])=>{
-    const inp=document.createElement('input'); inp.type='hidden'; inp.name=k; inp.value=v; form.appendChild(inp);
+  const // Image beacon — paling reliable, tidak ada CORS, jalan di semua device termasuk Android
+  const params = new URLSearchParams({
+    action:'tambah', kode, nama, kategori, harga, kondisi,
+    lokasi, wa, deskripsi, foto:fotoList.join('|'), emoji
   });
-  document.body.appendChild(form); form.submit();
-  setTimeout(()=>{ try{document.body.removeChild(form);document.body.removeChild(iframe);}catch{} },5000);
+  new Image().src = APPS_SCRIPT_URL + '?' + params.toString();
 
   document.getElementById('kode-rahasia').textContent=kode;
 
