@@ -241,8 +241,8 @@
   </div>
 
   <footer class="footer">
-    <span>🏮 Pasar Bekas Solo — <a href="https://github.com" target="_blank">GitHub Pages</a></span>
-    <span>Foto di <a href="https://imgbb.com" target="_blank">ImgBB</a></span>
+    <span>🏮 Pasar Bekas Solo · Area Surakarta</span>
+    <span>pasarbekassolo.my.id</span>
   </footer>
 </div>
 
@@ -502,31 +502,33 @@ document.getElementById('btn-jual').addEventListener('click', function() {
 
 async function loadData() {
   const url = CONFIG.SHEET_CSV_URL;
-  // Coba beberapa proxy secara berurutan
-  const proxies = [
-    u => 'https://corsproxy.io/?' + encodeURIComponent(u),
-    u => 'https://api.allorigins.win/get?url=' + encodeURIComponent(u),
-    u => 'https://thingproxy.freeboard.io/fetch/' + u,
+
+  // Coba fetch langsung dulu (works jika Google Sheets CORS ok)
+  // Lalu fallback ke beberapa proxy
+  const attempts = [
+    () => fetch(url).then(r => r.text()),
+    () => fetch('https://corsproxy.io/?' + url).then(r => r.text()),
+    () => fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url)).then(r => r.json()).then(d => d.contents),
+    () => fetch('https://api.codetabs.com/v1/proxy?quest=' + url).then(r => r.text()),
+    () => fetch('https://thingproxy.freeboard.io/fetch/' + url).then(r => r.text()),
   ];
-  let allItems_loaded = false;
-  for (const makeProxy of proxies) {
+
+  for (const attempt of attempts) {
     try {
-      const res = await fetch(makeProxy(url));
-      const text = res.headers.get('content-type') && res.headers.get('content-type').includes('json')
-        ? (await res.json()).contents
-        : await res.text();
-      const parsed = parseCSV(text || '');
-      if (parsed.length >= 0) { allItems = parsed; allItems_loaded = true; break; }
+      const text = await attempt();
+      if (text && text.includes(',') && text.includes('\n')) {
+        allItems = parseCSV(text);
+        document.getElementById('loading-state') && document.getElementById('loading-state').remove();
+        renderGrid();
+        return;
+      }
     } catch(e) { continue; }
   }
+
   document.getElementById('loading-state') && document.getElementById('loading-state').remove();
-  if (allItems_loaded) {
-    renderGrid();
-  } else {
-    const grid = document.getElementById('grid');
-    grid.innerHTML = '<div class="state-msg"><span class="icon">⚠️</span>Gagal memuat data.<div class="hint">Coba refresh halaman.</div></div>';
-    document.getElementById('stats-text').textContent = '';
-  }
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '<div class="state-msg"><span class="icon">⚠️</span>Gagal memuat data.<div class="hint">Coba refresh halaman.</div></div>';
+  document.getElementById('stats-text').textContent = '';
 }
 
 loadData();
