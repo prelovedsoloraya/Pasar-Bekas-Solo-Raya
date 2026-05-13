@@ -344,7 +344,7 @@ let allItems = [], activeFilter = 'semua', searchQuery = '', selectedItem = null
 
 function getFotos(item) {
   if (!item.foto) return [];
-  return item.foto.split(',').map(s => s.trim()).filter(Boolean);
+  return item.foto.split(/[|,]/).map(s => s.trim()).filter(Boolean);
 }
 
 
@@ -580,7 +580,7 @@ async function loadData() {
     try {
       const text = await attempt();
       if (text && text.includes(',') && text.includes('\n')) {
-        allItems = parseCSV(text);
+        allItems = parseCSV(text).reverse();
         document.getElementById('loading-state') && document.getElementById('loading-state').remove();
         renderGrid();
         return;
