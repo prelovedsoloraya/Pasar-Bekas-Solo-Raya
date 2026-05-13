@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏮</text></svg>">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jual Barang — Pasar Bekas Solo</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -241,12 +242,25 @@ input[type="hidden"] { display:none; }
     <div class="big">🎉</div>
     <h2>Barang berhasil ditayangkan!</h2>
     <p>Iklanmu sudah masuk ke Pasar Bekas Solo.<br>Pembeli bisa langsung hubungi kamu via WhatsApp.</p>
+    <!-- Banner peringatan -->
+    <div style="background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:12px;padding:13px 16px;margin-bottom:1rem;display:flex;gap:10px;align-items:flex-start;">
+      <span style="font-size:20px;flex-shrink:0">⚠️</span>
+      <div style="font-size:13px;color:#92400E;line-height:1.6;">
+        <strong style="font-size:14px;color:#78350F;">PENTING! Simpan kode ini sebelum menutup halaman.</strong><br>
+        Kode adalah satu-satunya cara untuk menandai barangmu terjual.<br>
+        Kode <strong>tidak bisa dipulihkan</strong> jika hilang — kamu harus hubungi admin.
+      </div>
+    </div>
+
     <div class="kode-box">
-      <div class="kode-label">Kode rahasia listing kamu</div>
+      <div class="kode-label">🔑 Kode rahasia listing kamu</div>
       <div class="kode-value" id="kode-rahasia">—</div>
+      <button onclick="copyKode()" id="btn-copy" style="width:100%;margin-top:.5rem;margin-bottom:.75rem;padding:8px;border-radius:8px;border:1.5px solid #AFA9EC;background:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#534AB7;cursor:pointer;">
+        📋 Salin Kode
+      </button>
       <div class="kode-hint">
-        📌 Simpan kode ini baik-baik.<br>
-        ✅ Kalau barang sudah laku, tandai di <a href="/tandai-terjual.html">halaman ini</a> supaya pembeli lain tidak terus menghubungimu.
+        ✅ Kode juga sudah dikirim ke WhatsApp kamu sebagai backup.<br>
+        Kalau barang sudah laku, tandai di <a href="/tandai-terjual.html">halaman ini</a> supaya pembeli lain tidak terus menghubungimu.
       </div>
     </div>
     <div class="btn-row">
@@ -357,19 +371,15 @@ async function submitForm() {
 
   const kode='PBS-'+Math.random().toString(36).substr(2,5).toUpperCase();
 
+  // Image beacon — paling reliable, tidak ada CORS, jalan di semua device termasuk Android
   const params = new URLSearchParams({
     action:'tambah', kode, nama, kategori, harga, kondisi,
     lokasi, wa, deskripsi, foto:fotoList.join('|'), emoji
   });
-  try {
-    await fetch(APPS_SCRIPT_URL + '?' + params.toString(), {
-      method: 'GET',
-      mode: 'no-cors'
-    });
-  } catch(e) {
-    console.warn('Fetch error:', e);
-  }
+  new Image().src = APPS_SCRIPT_URL + '?' + params.toString();
 
+  // Simpan kode ke localStorage — aman kalau back button
+  localStorage.setItem('pbs_kode_terakhir', JSON.stringify({ kode, nama, ts: Date.now() }));
   document.getElementById('kode-rahasia').textContent=kode;
 
   const waNum=wa.replace(/\D/g,'');
@@ -380,6 +390,23 @@ async function submitForm() {
   document.getElementById('form-screen').style.display='none';
   document.getElementById('success-screen').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function copyKode() {
+  const kode = document.getElementById('kode-rahasia').textContent;
+  navigator.clipboard.writeText(kode).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ Tersalin!';
+    btn.style.background = '#DCFCE7';
+    btn.style.borderColor = '#16A34A';
+    btn.style.color = '#16A34A';
+    setTimeout(() => {
+      btn.textContent = '📋 Salin Kode';
+      btn.style.background = '#fff';
+      btn.style.borderColor = '#AFA9EC';
+      btn.style.color = '#534AB7';
+    }, 2000);
+  });
 }
 
 function resetForm() {
@@ -406,6 +433,31 @@ function showError(msg) {
 function hideError() { document.getElementById('error-box').classList.remove('show'); }
 
 document.addEventListener("DOMContentLoaded", renderFotoGrid);
+
+// Cek kode terakhir dari localStorage (jaga-jaga kalau klik back)
+(function() {
+  const saved = localStorage.getItem('pbs_kode_terakhir');
+  if (!saved) return;
+  try {
+    const { kode, nama, ts } = JSON.parse(saved);
+    const hamLalu = (Date.now() - ts) / 1000 / 3600;
+    if (hamLalu > 24) { localStorage.removeItem('pbs_kode_terakhir'); return; }
+    // Tampilkan banner kode terakhir di atas form
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#EEEDFE;border:1px solid #AFA9EC;border-radius:12px;padding:14px 16px;margin-bottom:1.25rem;font-size:13px;color:#3C3489;line-height:1.6;';
+    banner.innerHTML = \`<strong>📌 Kode listing terakhirmu:</strong><br>
+      <span style="font-size:22px;font-weight:700;letter-spacing:.1em">\${kode}</span>
+      <span style="color:#7B79C8;font-size:12px;display:block;margin-top:2px">untuk: \${nama}</span>
+      <button onclick="localStorage.removeItem('pbs_kode_terakhir');this.parentElement.remove()" 
+        style="margin-top:8px;font-size:11px;color:#7B79C8;background:none;border:none;cursor:pointer;padding:0">
+        Tutup ×
+      </button>\`;
+    const container = document.querySelector('.container');
+    const formScreen = document.getElementById('form-screen');
+    if (container && formScreen) container.insertBefore(banner, formScreen);
+  } catch(e) { localStorage.removeItem('pbs_kode_terakhir'); }
+})();
+
 </script>
 </body>
 </html>
