@@ -375,7 +375,9 @@ function renderCard(item) {
     img.src = fotos[0];
     img.alt = item.nama;
     img.loading = 'lazy';
-    img.onerror = () => { imgWrap.innerHTML = item.emoji || '📦'; };
+    img.referrerPolicy = 'no-referrer';
+    img.crossOrigin = 'anonymous';
+    img.onerror = () => { imgWrap.textContent = getEmoji(item); };
     imgWrap.appendChild(img);
   } else {
     imgWrap.textContent = getEmoji(item);
@@ -479,6 +481,8 @@ function renderModalFoto() {
     const img = document.createElement('img');
     img.src = url;
     img.alt = 'Foto ' + (i+1);
+    img.referrerPolicy = 'no-referrer';
+    img.crossOrigin = 'anonymous';
     img.onerror = function() {
       const fb = document.createElement('div');
       fb.className = 'emoji-fb';
