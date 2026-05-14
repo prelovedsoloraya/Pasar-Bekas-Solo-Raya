@@ -232,6 +232,16 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 let currentListing = null;
 
+// Auto-load kode dari URL kalau ada (?kode=PBS-XXXXX)
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const kode = params.get('kode');
+  if (kode) {
+    document.getElementById('kode-input').value = kode.toUpperCase();
+    cariListing();
+  }
+});
+
 // Auto-uppercase kode input
 document.getElementById('kode-input').addEventListener('input', function() {
   let val = this.value.toUpperCase();
