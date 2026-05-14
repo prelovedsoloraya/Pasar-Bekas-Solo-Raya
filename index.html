@@ -567,8 +567,13 @@ document.getElementById('search').addEventListener('input', e => {
 const fab = document.getElementById('btn-jual-float');
 fab.addEventListener('click', () => window.location.href='jual.html');
 window.addEventListener('scroll', () => {
-  fab.classList.toggle('visible', window.scrollY > 120);
+  fab.classList.toggle('visible', window.scrollY > 120 || allItems.length === 0);
 }, {passive:true});
+
+// Langsung tampil kalau belum ada barang
+function updateFab() {
+  fab.classList.toggle('visible', window.scrollY > 120 || allItems.length === 0);
+}
 
 // Load dari Supabase
 async function loadData() {
@@ -583,6 +588,7 @@ async function loadData() {
     allItems = await res.json();
     document.getElementById('loading-state')?.remove();
     renderGrid();
+    updateFab();
   } catch(err) {
     console.error(err);
     const grid = document.getElementById('grid');
