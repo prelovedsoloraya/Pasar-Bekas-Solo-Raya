@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Listing — Pasar Bekas Solo Raya</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏮</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#18181B;--ink2:#52525B;--ink3:#A1A1AA;
+  --line:#E4E4E7;--line2:#D4D4D8;
+  --bg:#FAFAFA;--white:#FFFFFF;
+  --accent:#534AB7;--accent-pale:#EEEDFE;--accent-mid:#AFA9EC;
+  --green:#16A34A;--amber:#F59E0B;
+  --red:#DC2626;--red-pale:#FEE2E2;
+  --r:10px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh;padding-bottom:3rem}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid var(--line);background:var(--white);position:sticky;top:0;z-index:10}
+.nav-logo{font-family:'Instrument Serif',serif;font-size:17px;color:var(--ink);text-decoration:none}
+.nav-back{font-size:13px;color:var(--ink3);text-decoration:none;transition:color .15s}
+.nav-back:hover{color:var(--accent)}
+.container{max-width:560px;margin:0 auto;padding:2rem 1.25rem 0}
+.page-title{font-family:'Instrument Serif',serif;font-size:clamp(22px,4vw,28px);font-weight:400;line-height:1.15;margin-bottom:.35rem}
+.page-sub{font-size:14px;color:var(--ink3);margin-bottom:1.5rem}
+.section{margin-bottom:1.75rem}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.9rem;padding-bottom:.5rem;border-bottom:1px solid var(--line)}
+.field{margin-bottom:1rem}
+label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:5px}
+label .req{color:var(--accent);margin-left:2px}
+label .note{font-weight:400;color:var(--ink3);font-size:12px;margin-left:4px}
+input[type="text"],input[type="number"],input[type="tel"],select,textarea{
+  width:100%;padding:10px 13px;border:1.5px solid var(--line2);border-radius:var(--r);
+  font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--white);
+  outline:none;transition:border-color .15s,box-shadow .15s;appearance:none;-webkit-appearance:none
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(83,74,183,.1)}
+input::placeholder,textarea::placeholder{color:var(--ink3)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;cursor:pointer}
+textarea{resize:vertical}
+.kondisi-group{display:flex;gap:7px;flex-wrap:wrap}
+.kondisi-btn{padding:7px 15px;border-radius:999px;border:1.5px solid var(--line2);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.kondisi-btn.sel{background:var(--accent-pale);border-color:var(--accent);color:var(--accent);font-weight:600}
+input[type="hidden"]{display:none}
+.input-prefix{display:flex;align-items:center;border:1.5px solid var(--line2);border-radius:var(--r);overflow:hidden;background:var(--white);transition:border-color .15s,box-shadow .15s}
+.input-prefix:focus-within{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(83,74,183,.1)}
+.input-prefix span{padding:10px 12px;font-size:14px;font-weight:600;color:var(--ink3);background:var(--bg);border-right:1.5px solid var(--line2);flex-shrink:0}
+.input-prefix input{border:none;border-radius:0;box-shadow:none!important;flex:1}
+.warn-box{background:#FEF3C7;border:1.5px solid var(--amber);border-radius:12px;padding:13px 16px;margin-bottom:1.5rem;display:flex;gap:10px;align-items:flex-start}
+.error-box{background:var(--red-pale);color:var(--red);border-radius:var(--r);padding:11px 14px;font-size:13px;margin-bottom:1rem;display:none}
+.error-box.show{display:block}
+.btn-submit{width:100%;padding:14px;border-radius:var(--r);border:none;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.btn-submit:hover{background:#3C3489}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed}
+.btn-spinner{width:17px;height:17px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Kode screen */
+.kode-screen{text-align:center;padding:1rem 0}
+.kode-screen .big{font-size:48px;margin-bottom:1rem}
+.kode-screen h2{font-family:'Instrument Serif',serif;font-size:24px;font-weight:400;margin-bottom:.5rem}
+.kode-screen p{font-size:14px;color:var(--ink2);line-height:1.6}
+.kode-input-wrap{margin:1.5rem 0}
+.kode-input{width:100%;padding:14px;border:1.5px solid var(--line2);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:22px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-align:center;color:var(--ink);background:var(--white);outline:none;transition:border-color .15s,box-shadow .15s}
+.kode-input:focus{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(83,74,183,.1)}
+.kode-input::placeholder{font-size:14px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink3)}
+.btn-primary{width:100%;padding:13px;border-radius:var(--r);border:none;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-primary:hover{background:#3C3489}
+
+/* Success screen */
+.success-screen{display:none;text-align:center;padding:1rem 0}
+.success-screen .big{font-size:52px;margin-bottom:1rem}
+.success-screen h2{font-family:'Instrument Serif',serif;font-size:26px;font-weight:400;margin-bottom:.5rem}
+.success-screen p{font-size:14px;color:var(--ink2);line-height:1.6}
+.btn-row{display:flex;gap:8px;margin-top:1.25rem}
+.btn-sec{flex:1;padding:11px 16px;border-radius:var(--r);border:1.5px solid var(--line2);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;text-decoration:none;text-align:center;transition:border-color .15s,color .15s;display:flex;align-items:center;justify-content:center}
+.btn-sec:hover{border-color:var(--accent-mid);color:var(--accent)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-logo" href="/">🏮 Pasar Bekas Solo Raya</a>
+  <a class="nav-back" href="/">← Kembali</a>
+</nav>
+<div class="container">
+
+  <!-- Step 1: Input kode -->
+  <div id="kode-screen" class="kode-screen">
+    <div class="big">✏️</div>
+    <h2>Edit listing kamu</h2>
+    <p>Masukkan kode rahasia yang kamu dapat saat posting barang.</p>
+    <div class="kode-input-wrap">
+      <input type="text" class="kode-input" id="kode-input"
+        placeholder="PBS-XXXXX" maxlength="10"
+        autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="error-box" id="kode-error"></div>
+    <button class="btn-primary" onclick="cariListing()">Cari Listing →</button>
+  </div>
+
+  <!-- Step 2: Form edit -->
+  <div id="form-screen" style="display:none">
+    <h1 class="page-title">Edit listing</h1>
+    <p class="page-sub" id="edit-sub"></p>
+
+    <div class="warn-box">
+      <span style="font-size:20px;flex-shrink:0">⚠️</span>
+      <div style="font-size:13px;color:#92400E;line-height:1.6">
+        <strong style="color:#78350F">Perhatian! Kamu hanya bisa edit listing ini sekali.</strong><br>
+        Pastikan semua informasi sudah benar sebelum menyimpan.
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Info Barang</div>
+      <div class="field">
+        <label>Nama barang <span class="req">*</span></label>
+        <input type="text" id="nama" maxlength="80">
+      </div>
+      <div class="field">
+        <label>Deskripsi <span class="note">— kondisi detail, kelengkapan, alasan jual</span></label>
+        <textarea id="deskripsi" rows="3"></textarea>
+      </div>
+      <div class="field">
+        <label>Kategori <span class="req">*</span></label>
+        <select id="kategori">
+          <option value="">— Pilih kategori —</option>
+          <optgroup label="Elektronik">
+            <option value="hp & tablet">📱 HP &amp; Tablet</option>
+            <option value="laptop & komputer">💻 Laptop &amp; Komputer</option>
+            <option value="kamera">📷 Kamera &amp; Foto</option>
+            <option value="audio">🎧 Audio &amp; Headphone</option>
+            <option value="elektronik lain">🔌 Elektronik Lainnya</option>
+          </optgroup>
+          <optgroup label="Rumah &amp; Gaya Hidup">
+            <option value="perabot">🛋️ Perabot &amp; Furnitur</option>
+            <option value="dapur">🍳 Dapur &amp; Masak</option>
+            <option value="tanaman">🌿 Tanaman &amp; Pot</option>
+          </optgroup>
+          <optgroup label="Fashion">
+            <option value="fashion pria">👔 Fashion Pria</option>
+            <option value="fashion wanita">👗 Fashion Wanita</option>
+            <option value="sepatu & tas">👟 Sepatu &amp; Tas</option>
+            <option value="aksesoris">💍 Aksesoris</option>
+          </optgroup>
+          <optgroup label="Hobi &amp; Olahraga">
+            <option value="buku">📚 Buku &amp; Alat Tulis</option>
+            <option value="hobi & koleksi">🎸 Hobi &amp; Koleksi</option>
+            <option value="olahraga">⚽ Olahraga &amp; Outdoor</option>
+            <option value="mainan">🧸 Mainan &amp; Anak</option>
+          </optgroup>
+          <optgroup label="Kendaraan">
+            <option value="motor">🏍️ Motor</option>
+            <option value="mobil">🚗 Mobil</option>
+            <option value="sparepart">🔧 Sparepart &amp; Aksesoris</option>
+          </optgroup>
+          <option value="lainnya">📦 Lainnya</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Kondisi <span class="req">*</span></label>
+        <div class="kondisi-group" id="kondisi-group">
+          <button type="button" class="kondisi-btn" data-val="Baru">✨ Baru</button>
+          <button type="button" class="kondisi-btn" data-val="Like New">🌟 Like New</button>
+          <button type="button" class="kondisi-btn" data-val="Bekas Mulus">👌 Bekas Mulus</button>
+          <button type="button" class="kondisi-btn" data-val="Bekas Normal">👍 Bekas Normal</button>
+          <button type="button" class="kondisi-btn" data-val="Perlu Perbaikan">🔨 Perlu Perbaikan</button>
+        </div>
+        <input type="hidden" id="kondisi">
+      </div>
+      <div class="field">
+        <label>Harga <span class="req">*</span></label>
+        <div class="input-prefix">
+          <span>Rp</span>
+          <input type="number" id="harga" min="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Lokasi &amp; Kontak</div>
+      <div class="field">
+        <label>Lokasi <span class="req">*</span></label>
+        <select id="lokasi">
+          <option value="">— Pilih area —</option>
+          <optgroup label="Kota Solo">
+            <option>Banjarsari</option><option>Jebres</option><option>Laweyan</option>
+            <option>Pasar Kliwon</option><option>Serengan</option><option>Manahan</option>
+            <option>Pasar Gede</option><option>Pasar Klewer</option><option>Gladak</option>
+            <option>Purwosari</option><option>Nusukan</option><option>Mojosongo</option>
+          </optgroup>
+          <optgroup label="Sekitar Solo">
+            <option>Kartasura</option><option>Grogol</option><option>Solo Baru</option>
+            <option>Sukoharjo Kota</option><option>Palur</option><option>Colomadu</option>
+            <option>Ngemplak</option><option>Boyolali Kota</option><option>Karanganyar</option>
+            <option>Sragen</option><option>Klaten</option><option>Wonogiri</option>
+          </optgroup>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>No. WhatsApp <span class="req">*</span></label>
+        <input type="tel" id="wa" maxlength="16">
+      </div>
+    </div>
+
+    <div class="error-box" id="error-box"></div>
+    <button class="btn-submit" id="btn-submit" onclick="simpanEdit()">
+      <span id="btn-text">Simpan Perubahan</span>
+      <div class="btn-spinner" id="spinner"></div>
+    </button>
+  </div>
+
+  <!-- Step 3: Success -->
+  <div class="success-screen" id="success-screen">
+    <div class="big">✅</div>
+    <h2>Listing berhasil diperbarui!</h2>
+    <p>Perubahan sudah langsung tampil di Pasar Bekas Solo Raya.</p>
+    <div class="btn-row">
+      <a class="btn-sec" href="/">Lihat website</a>
+      <a class="btn-sec" href="/tandai-terjual.html">Tandai terjual</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://wlftqzxtfdzaywblpkzn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsZnRxenh0ZmR6YXl3Ymxwa3puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDg2NjksImV4cCI6MjA5NDI4NDY2OX0.Z6_brqQTgxE-jVNJP5CRkeeARccANQrHLEhl5G8pXaQ';
+
+let currentListing = null;
+
+// Auto-uppercase kode input
+document.getElementById('kode-input').addEventListener('input', function() {
+  let val = this.value.toUpperCase();
+  if (val.length===3 && !val.includes('-')) val+='-';
+  this.value = val;
+});
+document.getElementById('kode-input').addEventListener('keydown', e => {
+  if (e.key==='Enter') cariListing();
+});
+
+document.getElementById('kondisi-group').addEventListener('click', e => {
+  const btn=e.target.closest('.kondisi-btn');
+  if (!btn) return;
+  document.querySelectorAll('.kondisi-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  document.getElementById('kondisi').value=btn.dataset.val;
+});
+
+async function cariListing() {
+  const kode=(document.getElementById('kode-input').value||'').trim().toUpperCase();
+  const errEl=document.getElementById('kode-error');
+  errEl.style.display='none';
+
+  if (!kode) { showKodeError('Kode tidak boleh kosong.'); return; }
+  if (!/^PBS-[A-Z0-9]{4,6}$/.test(kode)) { showKodeError('Format kode tidak valid. Contoh: PBS-4A7X2'); return; }
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/listings?kode=eq.${kode}&select=*`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer '+SUPABASE_KEY } }
+    );
+    const rows = await res.json();
+    if (!rows.length) { showKodeError('Kode tidak ditemukan.'); return; }
+
+    const item = rows[0];
+    if (item.status==='terjual') { showKodeError('Listing ini sudah ditandai terjual dan tidak bisa diedit.'); return; }
+    if (item.sudah_diedit) { showKodeError('Listing ini sudah pernah diedit sebelumnya. Edit hanya bisa dilakukan sekali.'); return; }
+
+    currentListing = item;
+
+    // Isi form dengan data existing
+    document.getElementById('nama').value = item.nama||'';
+    document.getElementById('deskripsi').value = item.deskripsi||'';
+    document.getElementById('harga').value = item.harga||0;
+    document.getElementById('wa').value = item.wa||'';
+
+    // Set kategori
+    const katEl=document.getElementById('kategori');
+    for (let i=0; i<katEl.options.length; i++) {
+      if (katEl.options[i].value===(item.kategori||'').toLowerCase()) { katEl.selectedIndex=i; break; }
+    }
+
+    // Set lokasi
+    const lokEl=document.getElementById('lokasi');
+    for (let i=0; i<lokEl.options.length; i++) {
+      if (lokEl.options[i].value===item.lokasi||lokEl.options[i].text===item.lokasi) { lokEl.selectedIndex=i; break; }
+    }
+
+    // Set kondisi
+    document.getElementById('kondisi').value=item.kondisi||'';
+    document.querySelectorAll('.kondisi-btn').forEach(b=>{
+      if (b.dataset.val===item.kondisi) b.classList.add('sel');
+    });
+
+    document.getElementById('edit-sub').textContent = `Kode: ${kode} · Edit hanya bisa dilakukan sekali`;
+    document.getElementById('kode-screen').style.display='none';
+    document.getElementById('form-screen').style.display='block';
+
+  } catch(e) {
+    showKodeError('Gagal terhubung ke server.');
+  }
+}
+
+async function simpanEdit() {
+  const nama=document.getElementById('nama').value.trim();
+  const deskripsi=document.getElementById('deskripsi').value.trim();
+  const kategori=document.getElementById('kategori').value;
+  const harga=document.getElementById('harga').value;
+  const kondisi=document.getElementById('kondisi').value;
+  const lokasi=document.getElementById('lokasi').value;
+  const wa=document.getElementById('wa').value.trim();
+
+  if (!nama) return showError('Nama barang wajib diisi.');
+  if (!kategori) return showError('Pilih kategori.');
+  if (!kondisi) return showError('Pilih kondisi.');
+  if (!harga||Number(harga)<0) return showError('Masukkan harga yang valid.');
+  if (!lokasi) return showError('Pilih lokasi.');
+  if (!wa) return showError('No. WhatsApp wajib diisi.');
+
+  const btn=document.getElementById('btn-submit');
+  btn.disabled=true;
+  document.getElementById('btn-text').textContent='Menyimpan…';
+  document.getElementById('spinner').style.display='block';
+
+  const EMOJI_MAP={'hp & tablet':'📱','laptop & komputer':'💻','kamera':'📷','audio':'🎧','elektronik lain':'🔌','perabot':'🛋️','dapur':'🍳','tanaman':'🌿','fashion pria':'👔','fashion wanita':'👗','sepatu & tas':'👟','aksesoris':'💍','buku':'📚','hobi & koleksi':'🎸','olahraga':'⚽','mainan':'🧸','motor':'🏍️','mobil':'🚗','sparepart':'🔧','lainnya':'📦'};
+  const emoji=EMOJI_MAP[kategori]||'📦';
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/listings?kode=eq.${currentListing.kode}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer '+SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ nama, deskripsi, kategori, harga:Number(harga), kondisi, lokasi, wa, emoji, sudah_diedit: true })
+      }
+    );
+    if (!res.ok) throw new Error('Gagal update');
+
+    document.getElementById('form-screen').style.display='none';
+    document.getElementById('success-screen').style.display='block';
+    window.scrollTo({top:0,behavior:'smooth'});
+
+  } catch(e) {
+    showError('Gagal menyimpan. Periksa koneksi internet kamu.');
+    btn.disabled=false;
+    document.getElementById('btn-text').textContent='Simpan Perubahan';
+    document.getElementById('spinner').style.display='none';
+  }
+}
+
+function showKodeError(msg) {
+  const el=document.getElementById('kode-error');
+  el.textContent='⚠️ '+msg; el.style.display='block';
+}
+function showError(msg) {
+  const el=document.getElementById('error-box');
+  el.textContent='⚠️ '+msg; el.classList.add('show');
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+</script>
+</body>
+</html>
