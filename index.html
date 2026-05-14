@@ -320,7 +320,8 @@ function getFotos(item) {
 function isTerjual(item) { return (item.status||'').toLowerCase().trim()==='terjual'; }
 
 let allItems=[], activeFilter='semua', searchQuery='', selectedItem=null;
-let currentPage=1; const PAGE_SIZE=20;
+let currentPage=1;
+const PAGE_SIZE = window.innerWidth <= 600 ? 12 : 24;
 
 function getFiltered() {
   return allItems.filter(item => {
@@ -540,19 +541,20 @@ document.getElementById('search').addEventListener('input', e => {
 // FAB
 const fab = document.getElementById('btn-jual-float');
 fab.addEventListener('click', () => window.location.href='jual.html');
-window.addEventListener('scroll', () => {
-  fab.classList.toggle('visible', window.scrollY > 120 || allItems.length === 0);
-}, {passive:true});
 
-// Langsung tampil kalau belum ada barang
 function updateFab() {
   fab.classList.toggle('visible', window.scrollY > 120 || allItems.length === 0);
 }
 
+// Langsung tampil saat halaman dibuka
+fab.classList.add('visible');
+
+window.addEventListener('scroll', updateFab, {passive:true});
+
 // Load dari Supabase
 async function loadData() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/listings?select=*&order=tgl.desc&limit=1000`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/listings?select=*&order=tgl.desc&limit=500`, {
       headers: {
         'apikey': SUPABASE_KEY,
         'Authorization': 'Bearer ' + SUPABASE_KEY
