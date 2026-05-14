@@ -539,6 +539,44 @@ function showError(msg) {
   el.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function hideError() { document.getElementById('error-box').classList.remove('show'); }
+
+// ── Preview modal ────────────────────────────────────────────────
+let previewKode = '';
+
+function tampilPreview(item) {
+  previewKode = item.kode;
+  const imgEl = document.getElementById('preview-img');
+  const fotos = (item.foto||'').split('|').filter(Boolean);
+  if (fotos.length) {
+    const img = document.createElement('img');
+    img.src = fotos[0];
+    img.style.cssText = 'width:100%;height:100%;object-fit:contain;background:#F3F2EF';
+    imgEl.innerHTML = ''; imgEl.appendChild(img);
+  } else {
+    imgEl.textContent = item.emoji||'📦';
+  }
+  document.getElementById('preview-cat').textContent = item.kategori||'Lainnya';
+  document.getElementById('preview-name').textContent = item.nama;
+  document.getElementById('preview-price').textContent = 'Rp ' + Number(item.harga).toLocaleString('id-ID');
+  const desc = (item.deskripsi||'').trim();
+  const descEl = document.getElementById('preview-desc');
+  descEl.textContent = desc;
+  descEl.style.display = desc ? 'block' : 'none';
+  document.getElementById('preview-meta').innerHTML =
+    `<span style="background:#F3F2EF;padding:4px 10px;border-radius:999px">📍 ${item.lokasi||'—'}</span>
+     <span style="background:#F3F2EF;padding:4px 10px;border-radius:999px">${item.kondisi||''}</span>`;
+  const overlay = document.getElementById('preview-overlay');
+  overlay.style.display = 'flex';
+}
+
+function tutupPreview() {
+  document.getElementById('preview-overlay').style.display = 'none';
+}
+
+function keEdit() {
+  tutupPreview();
+  window.location.href = 'edit.html?kode=' + previewKode;
+}
 </script>
 
 <!-- Preview Modal -->
