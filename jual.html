@@ -484,30 +484,28 @@ async function submitForm() {
 
     if (!res.ok && res.status !== 204) throw new Error('Gagal simpan ke database');
 
-    // Simpan ke localStorage
-    localStorage.setItem('pbs_kode_terakhir', JSON.stringify({ kode, nama, ts: Date.now() }));
-
-    document.getElementById('kode-rahasia').textContent=kode;
-
-    // Kirim ke WA
-    const waNum=wa.replace(/\D/g,'');
-    const nomorWa=waNum.startsWith('0')?'62'+waNum.slice(1):waNum;
-    const pesanWa=encodeURIComponent(`Halo! Ini kode rahasia listing kamu di Pasar Bekas Solo Raya 🏮\n\nBarang : *${nama}*\nKode   : *${kode}*\n\nSimpan kode ini ya. Kalau barang sudah laku, tandai terjual di:\nhttps://pasarbekassolo.my.id/tandai-terjual.html`);
-    setTimeout(()=>window.open(`https://wa.me/${nomorWa}?text=${pesanWa}`,'_blank'),600);
-
-    // Tampilkan preview dulu sebelum success screen
-    tampilPreview({ nama, deskripsi, kategori, harga: Number(harga), kondisi, lokasi, wa, foto: fotoList.join('|'), emoji: EMOJI_MAP[kategori]||'📦', kode });
-
-    document.getElementById('form-screen').style.display='none';
-    document.getElementById('success-screen').style.display='block';
-    window.scrollTo({top:0,behavior:'smooth'});
-
   } catch(err) {
     showError('Gagal mengirim data. Periksa koneksi internet kamu.');
     btn.disabled=false;
     document.getElementById('btn-text').textContent='Tayang Sekarang →';
     document.getElementById('spinner').style.display='none';
+    return;
   }
+
+  // Berhasil — di luar try-catch biar error preview tidak trigger error posting
+  localStorage.setItem('pbs_kode_terakhir', JSON.stringify({ kode, nama, ts: Date.now() }));
+  document.getElementById('kode-rahasia').textContent=kode;
+
+  const waNum=wa.replace(/\D/g,'');
+  const nomorWa=waNum.startsWith('0')?'62'+waNum.slice(1):waNum;
+  const pesanWa=encodeURIComponent(`Halo! Ini kode rahasia listing kamu di Pasar Bekas Solo Raya 🏮\n\nBarang : *${nama}*\nKode   : *${kode}*\n\nSimpan kode ini ya. Kalau barang sudah laku, tandai terjual di:\nhttps://pasarbekassolo.my.id/tandai-terjual.html`);
+  setTimeout(()=>window.open(`https://wa.me/${nomorWa}?text=${pesanWa}`,'_blank'),600);
+
+  try { tampilPreview({ nama, deskripsi, kategori, harga: Number(harga), kondisi, lokasi, wa, foto: fotoList.join('|'), emoji: EMOJI_MAP[kategori]||'📦', kode }); } catch(e) { console.warn('Preview error:', e); }
+
+  document.getElementById('form-screen').style.display='none';
+  document.getElementById('success-screen').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function copyKode() {
