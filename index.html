@@ -182,7 +182,21 @@
     .modal-btn.primary { background:var(--purple); color:var(--purple-pale); border-color:var(--purple); }
     .modal-btn.primary:hover { background:var(--purple-dark); }
 
-    /* FAB */
+    /* FAB kiri — Tandai Terjual */
+    .btn-terjual-float {
+      position:fixed; bottom:24px; left:20px; z-index:99;
+      font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:700;
+      padding:13px 20px; border-radius:999px;
+      background:#fff; color:#534AB7;
+      border:1.5px solid #AFA9EC;
+      cursor:pointer;
+      box-shadow:0 4px 16px rgba(83,74,183,.15);
+      opacity:1; transition:background .15s, transform .15s;
+    }
+    .btn-terjual-float:hover { background:#EEEDFE; }
+    .btn-terjual-float:active { transform:scale(.96); }
+
+    /* FAB kanan — Jual Barang */
     .btn-jual-float {
       position:fixed; bottom:24px; right:20px; z-index:99;
       font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700;
@@ -211,7 +225,7 @@
       .nav { padding:1rem; }
       .btn-jual { display:none; }
       .grid { grid-template-columns:repeat(2,1fr); gap:12px; }
-      .page { padding-bottom:6rem; }
+      .page { padding-bottom:7rem; }
     }
     @media (max-width:380px) { .grid { grid-template-columns:1fr; } }
   </style>
@@ -270,23 +284,13 @@
     </div>
   </div>
 
-  <!-- Banner tandai terjual -->
-  <div style="margin-top:2rem;background:#EEEDFE;border:1px solid #AFA9EC;border-radius:14px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-    <span style="font-size:13px;color:#3C3489;line-height:1.5">
-      🎉 <strong>Barangmu sudah laku?</strong> Tandai terjual supaya pembeli lain tidak terus menghubungimu.
-    </span>
-    <a href="/tandai-terjual.html" style="font-size:13px;font-weight:700;color:#fff;background:#534AB7;padding:8px 18px;border-radius:999px;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background .15s"
-      onmouseover="this.style.background='#3C3489'" onmouseout="this.style.background='#534AB7'">
-      Tandai Terjual →
-    </a>
-  </div>
-
   <footer class="footer">
     <span>🏮 Pasar Bekas Solo Raya</span>
     <span>Solo Raya · Harga jujur sejak hari ini</span>
   </footer>
 </div>
 
+<button class="btn-terjual-float" onclick="window.location.href='tandai-terjual.html'">✅ Tandai Terjual</button>
 <button class="btn-jual-float" id="btn-jual-float">+ Jual Barang</button>
 
 <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
