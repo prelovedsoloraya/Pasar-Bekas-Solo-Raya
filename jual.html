@@ -419,7 +419,22 @@ async function submitForm() {
   const kode='PBS-'+Math.random().toString(36).substr(2,5).toUpperCase();
 
   try {
-    // ── Cek batas per nomor WA (maks 3 listing aktif) ──────────
+    // ── Cek duplikat — nama + WA sama dalam 1 menit terakhir ───
+    const satu_menit_lalu = new Date(Date.now()-60*1000).toISOString();
+    const dupCheck = await fetch(
+      `${SUPABASE_URL}/rest/v1/listings?nama=eq.${encodeURIComponent(nama)}&wa=eq.${encodeURIComponent(wa)}&tgl=gte.${satu_menit_lalu}&select=id`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer '+SUPABASE_KEY } }
+    );
+    const dupRows = await dupCheck.json();
+    if (dupRows.length > 0) {
+      showError('Listing ini baru saja diposting. Tunggu sebentar sebelum posting lagi.');
+      btn.disabled=false;
+      document.getElementById('btn-text').textContent='Tayang Sekarang →';
+      document.getElementById('spinner').style.display='none';
+      return;
+    }
+
+  // ── Cek batas per nomor WA (maks 3 listing aktif) ──────────
     const waCheck = await fetch(
       `${SUPABASE_URL}/rest/v1/listings?wa=eq.${encodeURIComponent(wa)}&status=neq.terjual&select=id`,
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer '+SUPABASE_KEY } }
@@ -467,7 +482,7 @@ async function submitForm() {
       body: JSON.stringify({ nama, deskripsi, kategori, harga: Number(harga), kondisi, lokasi, wa, foto: fotoList.join('|'), emoji, kode, status:'', ip: ip||'' })
     });
 
-    if (!res.ok) throw new Error('Gagal simpan ke database');
+    if (!res.ok && res.status !== 204) throw new Error('Gagal simpan ke database');
 
     // Simpan ke localStorage
     localStorage.setItem('pbs_kode_terakhir', JSON.stringify({ kode, nama, ts: Date.now() }));
