@@ -496,16 +496,8 @@ async function submitForm() {
   localStorage.setItem('pbs_kode_terakhir', JSON.stringify({ kode, nama, ts: Date.now() }));
   document.getElementById('kode-rahasia').textContent=kode;
 
-  const waNum=wa.replace(/\D/g,'');
-  const nomorWa=waNum.startsWith('0')?'62'+waNum.slice(1):waNum;
-  const pesanWa=encodeURIComponent(`Halo! Ini kode rahasia listing kamu di Pasar Bekas Solo Raya 🏮\n\nBarang : *${nama}*\nKode   : *${kode}*\n\nSimpan kode ini ya. Kalau barang sudah laku, tandai terjual di:\nhttps://pasarbekassolo.my.id/tandai-terjual.html`);
-  setTimeout(()=>window.open(`https://wa.me/${nomorWa}?text=${pesanWa}`,'_blank'),600);
-
+  // Tampilkan preview dulu — WA dikirim setelah user klik OK
   try { tampilPreview({ nama, deskripsi, kategori, harga: Number(harga), kondisi, lokasi, wa, foto: fotoList.join('|'), emoji: EMOJI_MAP[kategori]||'📦', kode }); } catch(e) { console.warn('Preview error:', e); }
-
-  document.getElementById('form-screen').style.display='none';
-  document.getElementById('success-screen').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function copyKode() {
@@ -573,6 +565,28 @@ function tutupPreview() {
   document.getElementById('preview-overlay').style.display = 'none';
 }
 
+function konfirmasiPosting() {
+  tutupPreview();
+
+  // Sekarang baru kirim kode ke WA
+  const waRaw = document.getElementById('wa').value.replace(/\D/g,'');
+  const nomorWa = waRaw.startsWith('0') ? '62'+waRaw.slice(1) : waRaw;
+  const namaBarang = document.getElementById('preview-name').textContent;
+  const pesanWa = encodeURIComponent(
+    `Halo! Ini kode rahasia listing kamu di Pasar Bekas Solo Raya 🏮\n\n` +
+    `Barang : *${namaBarang}*\n` +
+    `Kode   : *${previewKode}*\n\n` +
+    `Simpan kode ini ya. Kalau barang sudah laku, tandai terjual di:\n` +
+    `https://pasarbekassolo.my.id/tandai-terjual.html`
+  );
+  setTimeout(() => window.open(`https://wa.me/${nomorWa}?text=${pesanWa}`, '_blank'), 300);
+
+  // Tampilkan success screen
+  document.getElementById('form-screen').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 function keEdit() {
   tutupPreview();
   window.location.href = 'edit.html?kode=' + previewKode;
@@ -591,8 +605,8 @@ function keEdit() {
       <div id="preview-meta" style="display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:#5F5E5A;margin-bottom:18px"></div>
       <p style="font-size:12px;color:#9A9891;text-align:center;margin-bottom:12px">👆 Begini tampilan listingmu di website</p>
       <div style="display:flex;gap:8px">
-        <button onclick="tutupPreview()" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid #E4E4E7;background:#FAFAFA;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#52525B;cursor:pointer">Tutup</button>
-        <button onclick="keEdit()" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid #AFA9EC;background:#EEEDFE;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#534AB7;cursor:pointer">✏️ Edit listing</button>
+        <button onclick="keEdit()" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid #AFA9EC;background:#EEEDFE;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#534AB7;cursor:pointer">✏️ Edit</button>
+        <button onclick="konfirmasiPosting()" style="flex:1;padding:11px;border-radius:10px;border:none;background:#534AB7;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer">✅ Deal, tayangkan!</button>
       </div>
     </div>
   </div>
