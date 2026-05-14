@@ -186,18 +186,36 @@ input[type="hidden"]{display:none}
     <div class="section">
       <div class="section-label">Foto Barang</div>
       <div class="foto-grid" id="foto-grid">
-        <div class="foto-slot" id="slot-0" onclick="document.getElementById('file-input').click()">
+        <div class="foto-slot" id="slot-0" onclick="pilihSumber()">
           <span class="upload-icon">📷</span><span>Foto 1</span>
         </div>
-        <div class="foto-slot" id="slot-1" onclick="document.getElementById('file-input').click()">
+        <div class="foto-slot" id="slot-1" onclick="pilihSumber()">
           <span class="upload-icon">📷</span><span>Foto 2</span>
         </div>
-        <div class="foto-slot" id="slot-2" onclick="document.getElementById('file-input').click()">
+        <div class="foto-slot" id="slot-2" onclick="pilihSumber()">
           <span class="upload-icon">📷</span><span>Foto 3</span>
         </div>
       </div>
       <div class="foto-status" id="foto-status">Foto opsional, tapi listing dengan foto lebih cepat laku.</div>
-      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple style="display:none">
+
+      <!-- Tombol sumber foto -->
+      <div style="display:flex;gap:8px;margin-top:10px" id="foto-btns">
+        <button type="button" onclick="document.getElementById('file-galeri').click()"
+          style="flex:1;padding:9px;border-radius:var(--r);border:1.5px solid var(--line2);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;transition:all .15s"
+          onmouseover="this.style.borderColor='var(--accent-mid)';this.style.color='var(--accent)'"
+          onmouseout="this.style.borderColor='var(--line2)';this.style.color='var(--ink2)'">
+          🖼️ Dari Galeri
+        </button>
+        <button type="button" onclick="document.getElementById('file-kamera').click()"
+          style="flex:1;padding:9px;border-radius:var(--r);border:1.5px solid var(--line2);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;transition:all .15s"
+          onmouseover="this.style.borderColor='var(--accent-mid)';this.style.color='var(--accent)'"
+          onmouseout="this.style.borderColor='var(--line2)';this.style.color='var(--ink2)'">
+          📸 Ambil Foto
+        </button>
+      </div>
+
+      <input type="file" id="file-galeri" accept="image/jpeg,image/png,image/webp" multiple style="display:none">
+      <input type="file" id="file-kamera" accept="image/*" capture="environment" style="display:none">
     </div>
     <div class="error-box" id="error-box"></div>
     <button class="btn-submit" id="btn-submit" onclick="submitForm()">
@@ -300,7 +318,7 @@ function renderFotoGrid() {
       slot.appendChild(del);
     } else {
       slot.className='foto-slot';
-      slot.onclick=()=>document.getElementById('file-input').click();
+      slot.onclick=()=>{ if(fotoList.length<MAX_FOTO) document.getElementById('file-galeri').click(); };
       slot.innerHTML=`<span class="upload-icon">📷</span><span>Foto ${i+1}</span>`;
     }
   }
@@ -313,15 +331,22 @@ function updateFotoStatus() {
   else { st.textContent=`✓ ${fotoList.length} foto · bisa tambah ${MAX_FOTO-fotoList.length} lagi`; st.className='foto-status ok'; }
 }
 
-document.getElementById('file-input').addEventListener('change', async function() {
-  const files=Array.from(this.files).slice(0, MAX_FOTO-fotoList.length);
-  this.value='';
+async function handleFileInput(input) {
+  const files=Array.from(input.files).slice(0, MAX_FOTO-fotoList.length);
+  input.value='';
   for (const file of files) {
     if (fotoList.length>=MAX_FOTO) break;
     if (file.size>5*1024*1024) { showError('Ukuran foto maks 5MB.'); continue; }
     await uploadFoto(file);
   }
-});
+}
+document.getElementById('file-galeri').addEventListener('change', function() { handleFileInput(this); });
+document.getElementById('file-kamera').addEventListener('change', function() { handleFileInput(this); });
+
+function pilihSumber() {
+  if (fotoList.length >= MAX_FOTO) return;
+  // Di desktop langsung buka galeri, di HP ada dua tombol
+}
 
 async function uploadFoto(file) {
   uploadingCount++;
